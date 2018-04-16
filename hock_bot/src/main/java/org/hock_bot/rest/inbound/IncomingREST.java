@@ -46,8 +46,7 @@ public class IncomingREST {
 	        logger.info("\n\n\t\t Incoming message  --> "+update.getMessage().getText()+"\n\n");
 	        try {
 	            //execute(message); // Call method to send the message
-	        //} catch (TelegramApiException e) {
-	        //	logger.error(e.getMessage(), e);
+	        	return Response.ok(message.toString()).build();
 	        }catch (Exception e) {
 	        	logger.error(e.getMessage(), e);
 	        }
