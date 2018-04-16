@@ -20,7 +20,6 @@ public class HOCKBot  extends TelegramLongPollingBot {
 	@Override
 	public void onUpdateReceived(Update update) {
 		
-		
 		if (update.hasMessage() && update.getMessage().hasText()) {
 	        SendMessage message = new SendMessage() // Create a SendMessage object with mandatory fields
 	                .setChatId(update.getMessage().getChatId())
