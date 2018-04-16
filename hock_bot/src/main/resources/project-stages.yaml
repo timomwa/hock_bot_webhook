@@ -2,7 +2,7 @@ swarm:
   datasources:
     jdbc-drivers:
       com.mysql:
-        driver-class-name: com.mysql.jdbc.Driver
+        driver-class-name: com.mysql.cj.jdbc.Driver
         xa-datasource-class-name: com.mysql.jdbc.jdbc2.optional.MysqlXADataSource
         driver-module-name: com.mysql
     data-sources:
