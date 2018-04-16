@@ -22,6 +22,7 @@
         <configuration>
           <properties>
             <swarm.context.path>hock_bot_incoming</swarm.context.path>
+            <swarm.http.port>9988</swarm.http.port>
           </properties>
         </configuration>
       </plugin>
