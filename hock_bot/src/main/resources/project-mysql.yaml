@@ -9,5 +9,5 @@ swarm:
       ExampleDS:
         driver-name: com.mysql
         connection-url: jdbc:mysql://localhost:3306/hock_bot
-        user-name: root
+        user-name: hockbotadmin
         password: JJZCwN1CFTlw1YvM
