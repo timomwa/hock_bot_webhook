@@ -1,3 +1,4 @@
+package org.hock_bot.model;
 
 import javax.persistence.Entity;
 import javax.persistence.Table;

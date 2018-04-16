@@ -1,3 +1,5 @@
+package org.hock_bot.model;
+
 import java.io.Serializable;
 
 import javax.persistence.Column;
@@ -5,9 +7,6 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.MappedSuperclass;
-import javax.persistence.SequenceGenerator;
-
-import org.hock_bot.core.ConfigurationI;
 
 
 @MappedSuperclass
