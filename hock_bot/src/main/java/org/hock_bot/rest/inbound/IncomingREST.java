@@ -48,7 +48,7 @@ public class IncomingREST {
 	        logger.info("\n\n\t\t >>> Incoming message  --> "+update.getMessage().getText()+"\n\n");
 	        try {
 	            //execute(message); // Call method to send the message
-	        	String resp = "{ \"chat_id\": \""+update.getMessage().getChatId()+"\", \"text\": \"Text\" }";
+	        	String resp = "{ \"method\" : \"sendMessage\", \"chat_id\": \""+update.getMessage().getChatId()+"\", \"text\": \""+message.getText()+"\" }";
 	        	 logger.info("\n\n\t\t << OUT  --> "+resp+"\n\n");
 	  	       return Response.ok(resp).build();
 	        }catch (Exception e) {
