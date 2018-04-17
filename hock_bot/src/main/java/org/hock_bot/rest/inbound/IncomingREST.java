@@ -4,7 +4,9 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.core.Response;
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
@@ -15,8 +17,12 @@ import javax.ws.rs.Produces;
 import org.apache.log4j.Logger;
 import org.hock_bot.ejb.ConfigurationEJBI;
 import org.telegram.telegrambots.api.methods.send.SendMessage;
+import org.telegram.telegrambots.api.objects.Message;
 import org.telegram.telegrambots.api.objects.Update;
 import org.telegram.telegrambots.api.objects.inlinequery.result.InlineQueryResult;
+import org.telegram.telegrambots.api.objects.replykeyboard.ReplyKeyboardMarkup;
+import org.telegram.telegrambots.api.objects.replykeyboard.buttons.KeyboardButton;
+import org.telegram.telegrambots.api.objects.replykeyboard.buttons.KeyboardRow;
 import org.telegram.telegrambots.exceptions.TelegramApiException;
 
 @Path("/incoming")
@@ -56,10 +62,42 @@ public class IncomingREST {
 	public Response doPost(@PathParam("token") String token, Update update) {
 		
 		logger.info("\n\n IN POST:: update --->> "+update+"\n\n");
+		logger.info("\n\n IN POST:: ourtoken --->> ["+update+"]\n\n");
+		logger.info("\n\n IN POST:: token    --->> ["+token+"]\n\n");
 		
 		if(ourtoken.equals(token)){
 			
 			if(update.hasMessage()){
+				
+				Long chatId = update.getMessage().getChatId();
+				Integer reply_to_message_id = update.getMessage().getMessageId();
+				
+				SendMessage message = new SendMessage();
+				
+				ReplyKeyboardMarkup replyMarkup = new ReplyKeyboardMarkup();
+				
+				List<KeyboardRow> keyboard = new ArrayList<KeyboardRow>();
+				KeyboardRow row = new KeyboardRow();
+				KeyboardButton keboardButton = new KeyboardButton();
+				keboardButton.setText("Test Button");
+				row.add(keboardButton);
+				row.add("Test Row");
+				keyboard.add(row);
+				
+				replyMarkup.setKeyboard(keyboard);
+				replyMarkup.setResizeKeyboard(true);
+				
+				
+				message.setChatId( chatId );
+				message.setReplyMarkup(replyMarkup);
+				message.setReplyToMessageId(reply_to_message_id);
+				message.setText("Test");
+				
+				String response = message.toString();
+				
+				logger.info("\n\n IN POST:: Hapa sasa response --->> "+response+"\n\n");
+				
+				 return Response.ok(response).build();
 				
 			}
 			
