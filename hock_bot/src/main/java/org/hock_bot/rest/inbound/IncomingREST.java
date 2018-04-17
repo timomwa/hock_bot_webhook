@@ -28,6 +28,9 @@ import org.telegram.telegrambots.api.objects.replykeyboard.buttons.KeyboardRow;
 import org.telegram.telegrambots.exceptions.TelegramApiException;
 import org.telegram.telegrambots.exceptions.TelegramApiValidationException;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 @Path("/incoming")
 public class IncomingREST {
 	
@@ -93,17 +96,21 @@ public class IncomingREST {
 				message.setReplyToMessageId(reply_to_message_id);
 				message.setText("Test");
 				
+				ObjectMapper mapper = new ObjectMapper();
 				
-				
-				String response = message.toString();
 				try {
+					String response = mapper.writeValueAsString(message);//message.toString();
 					message.validate();
+					
+					logger.info("\n\n IN POST:: Hapa sasa response --->> \n\t\t"+response+"\n\n");
+					
+					 return Response.ok(response).build();
 				} catch (TelegramApiValidationException e) {
 					logger.error(e.getMessage(), e);
+				} catch (JsonProcessingException e) {
+					logger.error(e.getMessage(), e);
 				}
-				logger.info("\n\n IN POST:: Hapa sasa response --->> "+response+"\n\n");
 				
-				 return Response.ok(response).build();
 				
 			}
 			
