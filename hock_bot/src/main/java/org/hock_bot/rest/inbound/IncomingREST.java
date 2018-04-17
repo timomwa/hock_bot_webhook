@@ -20,10 +20,13 @@ import org.telegram.telegrambots.api.methods.send.SendMessage;
 import org.telegram.telegrambots.api.objects.Message;
 import org.telegram.telegrambots.api.objects.Update;
 import org.telegram.telegrambots.api.objects.inlinequery.result.InlineQueryResult;
+import org.telegram.telegrambots.api.objects.replykeyboard.InlineKeyboardMarkup;
 import org.telegram.telegrambots.api.objects.replykeyboard.ReplyKeyboardMarkup;
+import org.telegram.telegrambots.api.objects.replykeyboard.buttons.InlineKeyboardButton;
 import org.telegram.telegrambots.api.objects.replykeyboard.buttons.KeyboardButton;
 import org.telegram.telegrambots.api.objects.replykeyboard.buttons.KeyboardRow;
 import org.telegram.telegrambots.exceptions.TelegramApiException;
+import org.telegram.telegrambots.exceptions.TelegramApiValidationException;
 
 @Path("/incoming")
 public class IncomingREST {
@@ -74,27 +77,30 @@ public class IncomingREST {
 				
 				SendMessage message = new SendMessage();
 				
-				ReplyKeyboardMarkup replyMarkup = new ReplyKeyboardMarkup();
+				InlineKeyboardMarkup replyMarkup = new InlineKeyboardMarkup();
 				
-				List<KeyboardRow> keyboard = new ArrayList<KeyboardRow>();
-				KeyboardRow row = new KeyboardRow();
-				KeyboardButton keboardButton = new KeyboardButton();
-				keboardButton.setText("Test Button");
-				row.add(keboardButton);
-				row.add("Test Row");
-				keyboard.add(row);
+				List<List<InlineKeyboardButton>> keyboard = new ArrayList<List<InlineKeyboardButton>>();
+				List<InlineKeyboardButton> inlinekeyboardButtons = new ArrayList<InlineKeyboardButton>();
+				InlineKeyboardButton inlineButton = new InlineKeyboardButton();
+				inlineButton.setText("InlineBtnTest");
+				inlinekeyboardButtons.add(inlineButton);
 				
+				keyboard.add( inlinekeyboardButtons );
 				replyMarkup.setKeyboard(keyboard);
-				replyMarkup.setResizeKeyboard(true);
-				
 				
 				message.setChatId( chatId );
 				message.setReplyMarkup(replyMarkup);
 				message.setReplyToMessageId(reply_to_message_id);
 				message.setText("Test");
 				
-				String response = message.toString();
 				
+				
+				String response = message.toString();
+				try {
+					message.validate();
+				} catch (TelegramApiValidationException e) {
+					logger.error(e.getMessage(), e);
+				}
 				logger.info("\n\n IN POST:: Hapa sasa response --->> "+response+"\n\n");
 				
 				 return Response.ok(response).build();
