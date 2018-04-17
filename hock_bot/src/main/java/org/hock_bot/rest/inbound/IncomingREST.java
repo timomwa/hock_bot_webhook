@@ -80,25 +80,26 @@ public class IncomingREST {
 				
 				SendMessage message = new SendMessage();
 				
-				InlineKeyboardMarkup replyMarkup = new InlineKeyboardMarkup();
+				//InlineKeyboardMarkup replyMarkup = new InlineKeyboardMarkup();
 				
-				List<List<InlineKeyboardButton>> keyboard = new ArrayList<List<InlineKeyboardButton>>();
-				List<InlineKeyboardButton> inlinekeyboardButtons = new ArrayList<InlineKeyboardButton>();
-				InlineKeyboardButton inlineButton = new InlineKeyboardButton();
-				inlineButton.setText("InlineBtnTest");
-				inlinekeyboardButtons.add(inlineButton);
+				//List<List<InlineKeyboardButton>> keyboard = new ArrayList<List<InlineKeyboardButton>>();
+				//List<InlineKeyboardButton> inlinekeyboardButtons = new ArrayList<InlineKeyboardButton>();
+				//InlineKeyboardButton inlineButton = new InlineKeyboardButton();
+				//inlineButton.setText("InlineBtnTest");
+				//inlinekeyboardButtons.add(inlineButton);
 				
-				keyboard.add( inlinekeyboardButtons );
-				replyMarkup.setKeyboard(keyboard);
+				//keyboard.add( inlinekeyboardButtons );
+				//replyMarkup.setKeyboard(keyboard);
 				
 				message.setChatId( chatId );
-				message.setReplyMarkup(replyMarkup);
+				//message.setReplyMarkup(replyMarkup);
 				message.setReplyToMessageId(reply_to_message_id);
-				message.setText("Test");
+				message.setText("Test --> "+(new Date()));
 				
 				ObjectMapper mapper = new ObjectMapper();
 				
 				try {
+					
 					String response = mapper.writeValueAsString(message);//message.toString();
 					message.validate();
 					
