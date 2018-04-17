@@ -1,7 +1,14 @@
 package org.hock_bot.model;
 
 import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.Table;
 
+import org.hock_bot.core.ConfigurationI;
+
+
+@Entity
+@Table(name = "bot_send_message", catalog = ConfigurationI.CATALOG)
 public class SendMessage extends AbstractEntity {
 
 	/**
