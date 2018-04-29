@@ -33,7 +33,7 @@ public class User extends  AbstractEntity {
 	private Boolean isBot; /// < True, if this user is a bot
 	
 	@JsonProperty(ConfigurationI.LASTNAME_FIELD)
-	@Column(name="first_name")
+	@Column(name="last_name")
 	private String lastName; /// < Optional. User‘s or bot’s last name
 	
 	
