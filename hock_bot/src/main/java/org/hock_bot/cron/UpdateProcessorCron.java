@@ -235,6 +235,7 @@ public class UpdateProcessorCron {
 						reply_markup.put("resize_keyboard", true);
 						reply_markup.put("one_time_keyboard", false);
 						reply_markup.put("selective", false);
+						jsob.put("reply_markup", reply_markup);
 						
 					}
 					
