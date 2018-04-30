@@ -19,8 +19,8 @@ public class VehicleModelEJBImpl implements VehicleModelEJBI {
 	private VehicleModelDAOI vehicleModelDAO;
 
 	@Override
-	public List<VehicleModel> getByMakeName(String makeName) {
-		return vehicleModelDAO.getByMakeName(makeName);
+	public List<VehicleModel> getByMakeName(String makeName, int start, int size) {
+		return vehicleModelDAO.getByMakeName(makeName,  start,  size);
 	}
 
 

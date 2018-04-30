@@ -6,6 +6,6 @@ import org.hock_bot.model.VehicleModel;
 
 public interface VehicleModelEJBI {
 
-	List<VehicleModel> getByMakeName(String string);
+	List<VehicleModel> getByMakeName(String string, int start, int size);
 
 }
