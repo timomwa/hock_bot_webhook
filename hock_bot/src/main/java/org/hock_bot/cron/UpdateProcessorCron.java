@@ -246,7 +246,7 @@ public class UpdateProcessorCron {
 							inlineKeyboardButtonRow.put( keyboardButton );
 							
 							
-							if((rowCounter)%2==0){
+							if((rowCounter)%3==0){
 								inline_keyboard.put( inlineKeyboardButtonRow );
 								inlineKeyboardButtonRow = new JSONArray();
 							}
