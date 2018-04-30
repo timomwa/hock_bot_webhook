@@ -229,6 +229,7 @@ public class UpdateProcessorCron {
 						jsob.put("resize_keyboard", true);
 						jsob.put("one_time_keyboard", false);
 						jsob.put("selective", false);
+						jsob.put("method", "sendmessage");
 						
 					}else{
 						jsob.put("chat_id", chat.getChatId());
