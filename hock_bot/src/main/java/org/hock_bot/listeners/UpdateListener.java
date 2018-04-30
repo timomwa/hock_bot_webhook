@@ -5,10 +5,12 @@ import javax.ejb.Stateless;
 import javax.enterprise.event.Observes;
 
 import org.apache.log4j.Logger;
+import org.hock_bot.ejb.CallbackQueryEJBI;
 import org.hock_bot.ejb.ChatEJBI;
 import org.hock_bot.ejb.MessageEJBI;
 import org.hock_bot.ejb.UpdateEJBI;
 import org.hock_bot.ejb.UserEJBI;
+import org.telegram.telegrambots.api.objects.CallbackQuery;
 import org.telegram.telegrambots.api.objects.Chat;
 import org.telegram.telegrambots.api.objects.Message;
 import org.telegram.telegrambots.api.objects.Update;
@@ -28,12 +30,15 @@ public class UpdateListener {
 	@EJB
 	private ChatEJBI chatEJB;
 	
-	
 	@EJB
 	private MessageEJBI messageEJB;
 	
 	@EJB
 	private UpdateEJBI updateEJB;
+	
+	
+	@EJB
+	private CallbackQueryEJBI callBackQueryEJB;
 	
 	
 	public void update(@Observes Update update ){
@@ -51,9 +56,22 @@ public class UpdateListener {
 				
 				org.hock_bot.model.User user_ = userEJB.saveOrCreate(user);
 				org.hock_bot.model.Chat chat_ = chatEJB.saveOrCreate(chat);
-				org.hock_bot.model.Message message_ = messageEJB.createNew(user_, chat_, message);
+				org.hock_bot.model.Message message_ = messageEJB.createNew(user_, chat_, message, null);
 				org.hock_bot.model.Update update_ = updateEJB.saveNew(message_, update);
 				
+				
+			}
+			
+			if(update.hasCallbackQuery()){
+				
+				CallbackQuery callBackQuery =  update.getCallbackQuery();
+				Message message = callBackQuery.getMessage();
+				User user = message.getFrom();
+				Chat chat = message.getChat();
+				Message replyToMessage = message.getReplyToMessage();
+				org.hock_bot.model.User user_ = userEJB.saveOrCreate(user);
+				org.hock_bot.model.Chat chat_ = chatEJB.saveOrCreate(chat);
+				org.hock_bot.model.Message message_ = messageEJB.createNew(user_, chat_, message, replyToMessage);
 				
 			}
 			

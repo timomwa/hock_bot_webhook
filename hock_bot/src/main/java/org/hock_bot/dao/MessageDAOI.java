@@ -4,4 +4,6 @@ import org.hock_bot.model.Message;
 
 public interface MessageDAOI  extends GenericDAOI<Message, Long> {
 
+	Message findbyMessageId(Integer messageId);
+
 }

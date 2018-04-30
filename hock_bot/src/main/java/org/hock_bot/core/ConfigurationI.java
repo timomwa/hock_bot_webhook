@@ -83,5 +83,10 @@ public interface ConfigurationI {
     public static final String GROUPCHATTYPE = "group";
     public static final String CHANNELCHATTYPE = "channel";
     public static final String SUPERGROUPCHATTYPE  = "supergroup";
+    
+    public static final String INLINE_MESSAGE_ID_FIELD = "inline_message_id";
+    public static final String DATA_FIELD = "data";
+    public static final String GAMESHORTNAME_FIELD = "game_short_name";
+    public static final String CHAT_INSTANCE_FIELD = "chat_instance";
 
 }

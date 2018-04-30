@@ -54,6 +54,11 @@ public class Update extends AbstractEntity {
 	@Column(name="max_retries", nullable=false)
 	private Integer maxRetries;
 	
+	@JsonProperty(ConfigurationI.CALLBACKQUERY_FIELD)
+	@OneToOne
+	@JoinColumn(name="callback_query_id")
+	private CallbackQuery callbackQuery;
+	
 	@PreUpdate
 	@PrePersist
 	public void update(){
@@ -130,6 +135,16 @@ public class Update extends AbstractEntity {
 
 	public void setMaxRetries(Integer maxRetries) {
 		this.maxRetries = maxRetries;
+	}
+
+
+	public CallbackQuery getCallbackQuery() {
+		return callbackQuery;
+	}
+
+
+	public void setCallbackQuery(CallbackQuery callbackQuery) {
+		this.callbackQuery = callbackQuery;
 	}
 	
 	

@@ -21,12 +21,13 @@ import org.apache.http.client.fluent.Content;
 import org.apache.http.client.fluent.Request;
 import org.apache.http.entity.ContentType;
 import org.apache.log4j.Logger;
-
+import org.hock_bot.ejb.CallbackQueryEJBI;
 import org.hock_bot.ejb.ConfigurationEJBI;
 import org.hock_bot.ejb.MenuMapEJBI;
 import org.hock_bot.ejb.UpdateEJBI;
 import org.hock_bot.ejb.VehicleMakeEJBI;
 import org.hock_bot.ejb.VehicleModelEJBI;
+import org.hock_bot.model.CallbackQuery;
 import org.hock_bot.model.Chat;
 import org.hock_bot.model.MenuMap;
 import org.hock_bot.model.Message;
@@ -57,6 +58,9 @@ public class UpdateProcessorCron {
 	
 	@EJB
 	private VehicleMakeEJBI vehiceMakelEJB;
+	
+	@EJB
+	private CallbackQueryEJBI callBackQueryEJB;
 	
 	private Logger logger = Logger.getLogger(getClass());
 	
@@ -208,41 +212,36 @@ public class UpdateProcessorCron {
 				try{
 					
 					Message message  = update.getMessage();
-					Chat chat = message.getChat();
-					updateEJB.updateStatus(Status.PROCESSING, update.getId());
-					String sourceMsg = message.getText();
-					if(sourceMsg!=null && sourceMsg!=null){
-						if(sourceMsg.trim().contains("@".concat(botName))){
-							sourceMsg = sourceMsg.replaceAll("@".concat(botName), "").trim().toLowerCase();
-						}
-					}
-					MenuMap responsemap = menuMapEJB.findMenu(sourceMsg);
-					String respText = null;
-					if(responsemap!=null){
-						respText = responsemap.getResponse();
-					}
-					if(respText==null){
-						respText = "Sorry, I don't have a response for that at the moment. Type / to see a list of available options";
-					}
+					CallbackQuery callbackQuery = update.getCallbackQuery();
 					
 					JSONObject jsob  = new JSONObject();
+					JSONArray inlineKeyboardButtonRow = new JSONArray();
+					JSONArray inline_keyboard = new JSONArray();
+					int rowCounter = 0;
 					
-					jsob.put("chat_id", chat.getChatId());
-					jsob.put("text", respText);
-					jsob.put("reply_to_message_id", message.getMessageId());
-					jsob.put("method", "sendmessage");
-					
-					if(sourceMsg!=null && sourceMsg.equalsIgnoreCase("/service")){
+					if(callbackQuery!=null){
 						
-						JSONArray inlineKeyboardButtonRow = new JSONArray();
-						JSONArray inline_keyboard = new JSONArray();
+						Message message_C = callbackQuery.getMessage();
+						Chat chat_C = message_C.getChat();
+						String data = callbackQuery.getData();
+						String model = "";
+						if(data!=null && !data.trim().isEmpty()){
+							try{
+								model = data.split("modelName")[1].replaceAll("\\=", "").replaceAll("=", "");
+							}catch(Exception e){
+								logger.error(e.getMessage(), e);
+							}
+						}
 						
-						int rowCounter = 0;
-						for(VehicleModel model : vehicleModels){
+						jsob.put("chat_id", chat_C.getChatId());
+						jsob.put("message_id", message_C.getMessageId());
+						jsob.put("text", "Which year is your Honda "+model+" ?");
+						
+						for(int i = 1995; i<2020; i++){
 							
 							JSONObject keyboardButton  = new JSONObject();
-							keyboardButton.put("text", model.getName());
-							keyboardButton.put("callback_data", "modelId=".concat( String.valueOf( model.getId() ) ).concat("&modelName=".concat(  model.getName() )));
+							keyboardButton.put("text", String.valueOf( i) );
+							keyboardButton.put("callback_data", String.valueOf( i ));
 							inlineKeyboardButtonRow.put( keyboardButton );
 							
 							
@@ -252,29 +251,84 @@ public class UpdateProcessorCron {
 							}
 							
 							rowCounter++;
+							
 						}
 						
 						inline_keyboard.put( inlineKeyboardButtonRow );
 						
-						JSONObject reply_markup = new JSONObject();
-						reply_markup.put("inline_keyboard", inline_keyboard);
-						reply_markup.put("resize_keyboard", true);
-						reply_markup.put("one_time_keyboard", true);
-						reply_markup.put("selective", false);
-						jsob.put("reply_markup", reply_markup);
+					}else if(message!=null){
 						
-					}
-					
-					logger.info(" xxyy req>>>> ::: "+jsob.toString());
-					Content content = Request.Post(TELEGRAM_SEND_MESSAGE_URL).bodyString(jsob.toString() ,ContentType.create("application/json", Consts.UTF_8.name())).execute().returnContent();
-					String response = content.asString();
-					
-					logger.info(" xxxyyy <<<< ::: "+response);
-					
-					JSONObject resp = new JSONObject(response);
-					
-					if(resp.getBoolean("ok")){
-						updateEJB.updateStatus(Status.PROCESSED, update.getId());
+						Chat chat = message.getChat();
+						updateEJB.updateStatus(Status.PROCESSING, update.getId());
+						String sourceMsg = message.getText();
+						if(sourceMsg!=null && sourceMsg!=null){
+							if(sourceMsg.trim().contains("@".concat(botName))){
+								sourceMsg = sourceMsg.replaceAll("@".concat(botName), "").trim().toLowerCase();
+							}
+						}
+						MenuMap responsemap = menuMapEJB.findMenu(sourceMsg);
+						String respText = null;
+						if(responsemap!=null){
+							respText = responsemap.getResponse();
+						}
+						if(respText==null){
+							respText = "Sorry, I don't have a response for that at the moment. Type / to see a list of available options";
+						}
+						
+						
+						
+						
+						jsob.put("chat_id", chat.getChatId());
+						jsob.put("text", respText);
+						jsob.put("reply_to_message_id", message.getMessageId());
+						jsob.put("method", "sendmessage");
+						
+						logger.info(" sourceMsg ::: "+sourceMsg);
+						
+						if(sourceMsg!=null && sourceMsg.equalsIgnoreCase("/service")){
+							
+							for(VehicleModel model : vehicleModels){
+								
+								JSONObject keyboardButton  = new JSONObject();
+								keyboardButton.put("text", model.getName());
+								keyboardButton.put("callback_data", "modelId=".concat( String.valueOf( model.getId() ) ).concat("&modelName=".concat(  model.getName() )));
+								inlineKeyboardButtonRow.put( keyboardButton );
+								
+								
+								if((rowCounter)%3==0){
+									inline_keyboard.put( inlineKeyboardButtonRow );
+									inlineKeyboardButtonRow = new JSONArray();
+								}
+								
+								rowCounter++;
+							}
+							
+							inline_keyboard.put( inlineKeyboardButtonRow );
+							
+							
+							
+						}
+						
+						JSONObject reply_markup = new JSONObject();
+						if(inline_keyboard!=null && inline_keyboard.length()>0){
+							reply_markup.put("inline_keyboard", inline_keyboard);
+							//reply_markup.put("resize_keyboard", true);
+							reply_markup.put("one_time_keyboard", true);
+							reply_markup.put("selective", false);
+							jsob.put("reply_markup", reply_markup);
+						}
+						
+						logger.info(" xxyy req>>>> ::: "+jsob.toString());
+						Content content = Request.Post(TELEGRAM_SEND_MESSAGE_URL).bodyString(jsob.toString() ,ContentType.create("application/json", Consts.UTF_8.name())).execute().returnContent();
+						String response = content.asString();
+						
+						logger.info(" xxxyyy <<<< ::: "+response);
+						
+						JSONObject resp = new JSONObject(response);
+						
+						if(resp.getBoolean("ok")){
+							updateEJB.updateStatus(Status.PROCESSED, update.getId());
+						}
 					}
 					
 				}catch(Exception e){
