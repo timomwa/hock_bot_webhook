@@ -50,6 +50,7 @@ public class ChatEJBImpl implements ChatEJBI {
 			chat_.setFirstName(chat.getFirstName());
 			chat_.setInviteLink(chat.getInviteLink());
 			chat_.setLastName(chat.getLastName());
+			
 			//chat_.setPinnedMessage(chat.getPinnedMessage());
 			chat_.setStickerSetName(chat.getStickerSetName());
 			chat_.setTitle(chat.getTitle());
