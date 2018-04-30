@@ -19,6 +19,7 @@ public class Message extends AbstractEntity {
 	private Integer messageId;
 	
 	@JsonProperty(ConfigurationI.FROM_FIELD)
+	@ManyToOne
 	@JoinColumn(name="user_id")
 	private User fromUser;
 	
