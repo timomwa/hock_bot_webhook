@@ -318,17 +318,19 @@ public class UpdateProcessorCron {
 							jsob.put("reply_markup", reply_markup);
 						}
 						
-						logger.info(" xxyy req>>>> ::: "+jsob.toString());
-						Content content = Request.Post(TELEGRAM_SEND_MESSAGE_URL).bodyString(jsob.toString() ,ContentType.create("application/json", Consts.UTF_8.name())).execute().returnContent();
-						String response = content.asString();
 						
-						logger.info(" xxxyyy <<<< ::: "+response);
-						
-						JSONObject resp = new JSONObject(response);
-						
-						if(resp.getBoolean("ok")){
-							updateEJB.updateStatus(Status.PROCESSED, update.getId());
-						}
+					}
+					
+					logger.info(" xxyy req >>>> ::: "+jsob.toString());
+					Content content = Request.Post(TELEGRAM_SEND_MESSAGE_URL).bodyString(jsob.toString() ,ContentType.create("application/json", Consts.UTF_8.name())).execute().returnContent();
+					String response = content.asString();
+					
+					logger.info(" xxxyyy <<<< ::: "+response);
+					
+					JSONObject resp = new JSONObject(response);
+					
+					if(resp.getBoolean("ok")){
+						updateEJB.updateStatus(Status.PROCESSED, update.getId());
 					}
 					
 				}catch(Exception e){
