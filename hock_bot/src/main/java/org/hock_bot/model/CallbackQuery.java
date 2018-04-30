@@ -2,6 +2,7 @@ package org.hock_bot.model;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.Index;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
@@ -12,7 +13,12 @@ import org.hock_bot.core.ConfigurationI;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 @Entity
-@Table(name = "bot_callback_query", catalog = ConfigurationI.CATALOG)
+@Table(name = "bot_callback_query", indexes={
+		@Index(
+				columnList="callback_query_id", 
+				unique=true)
+		}, 
+catalog = ConfigurationI.CATALOG)
 public class CallbackQuery extends AbstractEntity {
 
 	/**
@@ -21,7 +27,7 @@ public class CallbackQuery extends AbstractEntity {
 	private static final long serialVersionUID = 109263926459110431L;
 	
 	
-	@Column(name="callback_query_id")
+	@Column(name="callback_query_id", unique=true)
 	private Long callBackQueryId;
 	
 	@JsonProperty(ConfigurationI.FROM_FIELD)

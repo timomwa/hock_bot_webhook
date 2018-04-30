@@ -21,7 +21,7 @@ public class UpdateEJBImpl implements UpdateEJBI {
 	private UpdateDAOI updateDAO;
 
 	@Override
-	public org.hock_bot.model.Update saveNew(Message message_, Update update) {
+	public org.hock_bot.model.Update saveNew(Message message_, Update update, org.hock_bot.model.CallbackQuery callBackQuery) {
 		
 		org.hock_bot.model.Update update_ = null;
 		
@@ -31,6 +31,7 @@ public class UpdateEJBImpl implements UpdateEJBI {
 			update_.setMessage(message_);
 			update_.setStatus(Status.JUST_IN);
 			update_.setUpdateId(update.getUpdateId());
+			update_.setCallbackQuery(callBackQuery);
 			update_ = updateDAO.save(update_);
 		
 		}catch(Exception e){

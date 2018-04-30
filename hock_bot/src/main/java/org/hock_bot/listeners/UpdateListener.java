@@ -57,7 +57,7 @@ public class UpdateListener {
 				org.hock_bot.model.User user_ = userEJB.saveOrCreate(user);
 				org.hock_bot.model.Chat chat_ = chatEJB.saveOrCreate(chat);
 				org.hock_bot.model.Message message_ = messageEJB.createNew(user_, chat_, message, null);
-				org.hock_bot.model.Update update_ = updateEJB.saveNew(message_, update);
+				updateEJB.saveNew(message_, update, null);
 				
 				
 			}
@@ -65,14 +65,18 @@ public class UpdateListener {
 			if(update.hasCallbackQuery()){
 				
 				CallbackQuery callBackQuery =  update.getCallbackQuery();
+				User fromUserCBQ  = callBackQuery.getFrom();
 				Message message = callBackQuery.getMessage();
 				User user = message.getFrom();
 				Chat chat = message.getChat();
 				Message replyToMessage = message.getReplyToMessage();
+				org.hock_bot.model.User fromUserCBQ_ = userEJB.saveOrCreate(fromUserCBQ);
 				org.hock_bot.model.User user_ = userEJB.saveOrCreate(user);
 				org.hock_bot.model.Chat chat_ = chatEJB.saveOrCreate(chat);
 				org.hock_bot.model.Message message_ = messageEJB.createNew(user_, chat_, message, replyToMessage);
-				org.hock_bot.model.Update update_ = updateEJB.saveNew(message_, update);
+				org.hock_bot.model.CallbackQuery callBackQ =  callBackQueryEJB.createNew(fromUserCBQ_,message_, callBackQuery);
+				
+				updateEJB.saveNew(message_, update, callBackQ);
 				
 			}
 			

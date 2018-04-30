@@ -7,7 +7,7 @@ import org.telegram.telegrambots.api.objects.Update;
 
 public interface UpdateEJBI {
 
-	public org.hock_bot.model.Update saveNew(org.hock_bot.model.Message message_, Update update);
+	public org.hock_bot.model.Update saveNew(org.hock_bot.model.Message message_, Update update, org.hock_bot.model.CallbackQuery callBackQuery);
 
 	public List<org.hock_bot.model.Update> listUnprocessed(int size);
 
