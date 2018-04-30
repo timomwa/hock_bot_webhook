@@ -203,6 +203,12 @@ public class UpdateProcessorCron {
 			TELEGRAM_SEND_MESSAGE_URL = TELEGRAM_SEND_MESSAGE_URL.replaceAll("\\#\\{TELEGRAM_ACCESS_TOKEN\\}", TELEGRAM_ACCESS_TOKEN);
 			String botName = configEJB.getOrCreateConfigValue(ConfigurationEJBI.BOT_NAME, "honda_owners_club_bot");
 			
+			
+			String TELEGRAM_EDIT_MESSAGE_URL = configEJB.getOrCreateConfigValue(ConfigurationEJBI.TELEGRAM_EDIT_MESSAGE_URL, "#{TELEGRAM_API_BASE_URL}/bot#{TELEGRAM_ACCESS_TOKEN}/editMessageText");
+			TELEGRAM_EDIT_MESSAGE_URL = TELEGRAM_EDIT_MESSAGE_URL.replaceAll("\\#\\{TELEGRAM_API_BASE_URL\\}", TELEGRAM_API_BASE_URL);
+			TELEGRAM_EDIT_MESSAGE_URL = TELEGRAM_EDIT_MESSAGE_URL.replaceAll("\\#\\{TELEGRAM_ACCESS_TOKEN\\}", TELEGRAM_ACCESS_TOKEN);
+			
+			
 			int start = 0;
 			int size = 500;
 			List<VehicleModel> vehicleModels = vehiceModelEJB.getByMakeName("honda",start,size); 
@@ -219,7 +225,11 @@ public class UpdateProcessorCron {
 					JSONArray inline_keyboard = new JSONArray();
 					int rowCounter = 0;
 					
+					String url = null;
+					
 					if(callbackQuery!=null){
+						url = TELEGRAM_EDIT_MESSAGE_URL;
+						
 						
 						Message message_C = callbackQuery.getMessage();
 						Chat chat_C = message_C.getChat();
@@ -257,6 +267,8 @@ public class UpdateProcessorCron {
 						inline_keyboard.put( inlineKeyboardButtonRow );
 						
 					}else if(message!=null){
+						
+						url = TELEGRAM_SEND_MESSAGE_URL;
 						
 						Chat chat = message.getChat();
 						updateEJB.updateStatus(Status.PROCESSING, update.getId());
@@ -321,8 +333,8 @@ public class UpdateProcessorCron {
 						
 					}
 					
-					logger.info(" xxyy req >>>> ::: "+jsob.toString());
-					Content content = Request.Post(TELEGRAM_SEND_MESSAGE_URL).bodyString(jsob.toString() ,ContentType.create("application/json", Consts.UTF_8.name())).execute().returnContent();
+					logger.info("  xxyy req url-> ["+url+"] >>>> ::: "+jsob.toString());
+					Content content = Request.Post(url).bodyString(jsob.toString() ,ContentType.create("application/json", Consts.UTF_8.name())).execute().returnContent();
 					String response = content.asString();
 					
 					logger.info(" xxxyyy <<<< ::: "+response);
