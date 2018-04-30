@@ -3,6 +3,7 @@ package org.hock_bot.model;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 import org.hock_bot.core.ConfigurationI;
@@ -26,6 +27,7 @@ public class Message extends AbstractEntity {
 	private Integer date;
 	
 	@JsonProperty(ConfigurationI.CHAT_FIELD)
+	@ManyToOne
 	@JoinColumn(name="chat_id")
 	private Chat chat;
 	
