@@ -24,9 +24,11 @@ public class CallbackQueryEJBImpl implements CallbackQueryEJBI {
 		if(callBackQuery==null)
 			return null;
 		
-		CallbackQuery callbackQuery = findbyCallBackQueryId(callBackQuery.getId());
+		CallbackQuery callbackQuery = null;
 		
 		try{
+			 
+			callbackQuery = findbyCallBackQueryId( Long.valueOf(callBackQuery.getId()) );
 			if(callbackQuery==null){
 				callbackQuery = new CallbackQuery();
 				callbackQuery.setCallBackQueryId( Long.valueOf( callBackQuery.getId() )  );
@@ -46,7 +48,7 @@ public class CallbackQueryEJBImpl implements CallbackQueryEJBI {
 	}
 
 	@Override
-	public  CallbackQuery findbyCallBackQueryId(String callBackQueryId) {
+	public  CallbackQuery findbyCallBackQueryId(Long callBackQueryId) {
 		return callBackQueryDAO.findbyCallBackQueryId(callBackQueryId);
 	}
 

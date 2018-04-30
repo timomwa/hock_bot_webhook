@@ -12,7 +12,7 @@ public class CallbackQueryDAOImpl extends GenericDAOImpl<CallbackQuery, Long> im
 	private Logger logger = Logger.getLogger(getClass());
 
 	@Override
-	public CallbackQuery findbyCallBackQueryId(String callBackQueryId) {
+	public CallbackQuery findbyCallBackQueryId(Long callBackQueryId) {
 		
 		CallbackQuery cbq = null;
 		
