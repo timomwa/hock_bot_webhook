@@ -8,7 +8,6 @@ import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
 import org.hock_bot.core.ConfigurationI;
-import org.telegram.telegrambots.api.objects.Message;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
