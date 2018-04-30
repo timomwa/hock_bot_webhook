@@ -23,8 +23,10 @@ import org.apache.http.entity.ContentType;
 import org.apache.log4j.Logger;
 
 import org.hock_bot.ejb.ConfigurationEJBI;
+import org.hock_bot.ejb.MenuMapEJBI;
 import org.hock_bot.ejb.UpdateEJBI;
 import org.hock_bot.model.Chat;
+import org.hock_bot.model.MenuMap;
 import org.hock_bot.model.Message;
 import org.hock_bot.model.Status;
 import org.hock_bot.model.Update;
@@ -41,6 +43,9 @@ public class UpdateProcessorCron {
 	
 	@EJB
 	private UpdateEJBI updateEJB;
+	
+	@EJB
+	private MenuMapEJBI menuMapEJB;
 	
 	private Logger logger = Logger.getLogger(getClass());
 	
@@ -189,9 +194,18 @@ public class UpdateProcessorCron {
 					Message message  = update.getMessage();
 					Chat chat = message.getChat();
 					updateEJB.updateStatus(Status.PROCESSING, update.getId());
+					
+					MenuMap responsemap = menuMapEJB.findMenu(message.getText());
+					String respText = null;
+					if(responsemap!=null){
+						respText = responsemap.getResponse();
+					}
+					if(respText==null){
+						respText = "Sorry, I don't have a response for that at the moment. Type / to see a list of available options";
+					}
 					JSONObject jsob  = new JSONObject();
 					jsob.put("chat_id", chat.getChatId());
-					jsob.put("text", " Echo :: "+message.getText()+(new Date()));
+					jsob.put("text", respText);
 					jsob.put("reply_to_message_id", message.getMessageId());
 					jsob.put("method", "sendmessage");
 					
