@@ -178,7 +178,7 @@ public class UpdateProcessorCron {
 			
 			String TELEGRAM_API_BASE_URL = configEJB.getOrCreateConfigValue(ConfigurationEJBI.TELEGRAM_API_BASE_URL, "https://api.telegram.org");
 			String TELEGRAM_ACCESS_TOKEN = configEJB.getOrCreateConfigValue(ConfigurationEJBI.TELEGRAM_ACCESS_TOKEN, "474326849:AAGx7g7sBcDWk_UrGenR0hdEdraG75cLVzk");
-			String TELEGRAM_SEND_MESSAGE_URL = configEJB.getOrCreateConfigValue(ConfigurationEJBI.TELEGRAM_SEND_MESSAGE_URL, "#{TELEGRAM_API_BASE_URL}/bot#{HTTP_ACCESS_TOKEN}/sendMessage");
+			String TELEGRAM_SEND_MESSAGE_URL = configEJB.getOrCreateConfigValue(ConfigurationEJBI.TELEGRAM_SEND_MESSAGE_URL, "#{TELEGRAM_API_BASE_URL}/bot#{TELEGRAM_ACCESS_TOKEN}/sendMessage");
 			TELEGRAM_SEND_MESSAGE_URL = TELEGRAM_SEND_MESSAGE_URL.replaceAll("\\#\\{TELEGRAM_API_BASE_URL\\}", TELEGRAM_API_BASE_URL);
 			TELEGRAM_SEND_MESSAGE_URL = TELEGRAM_SEND_MESSAGE_URL.replaceAll("\\#\\{TELEGRAM_ACCESS_TOKEN\\}", TELEGRAM_ACCESS_TOKEN);
 			
