@@ -14,6 +14,7 @@ public interface ConfigurationEJBI {
 	public static final String CRON_EXPR_PROCESS_UPDATES_DAY = "CRON_EXPR_PROCESS_UPDATES_DAY";
 	public static final String CRON_EXPR_PROCESS_UPDATES_MONTH = "CRON_EXPR_PROCESS_UPDATES_MONTH";
 	public static final String CRON_EXPR_PROCESS_UPDATES_YEAR = "CRON_EXPR_PROCESS_UPDATES_YEAR";
+	public static final String BOT_NAME = "BOT_NAME";
 
 	public String getOrCreateConfigValue(String key, String defaultVal);
 	

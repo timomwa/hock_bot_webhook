@@ -20,7 +20,7 @@ public class MenuMapDAOImpl   extends GenericDAOImpl<MenuMap, Long> implements M
 		
 		try{
 			
-			Query qry = em.createQuery("from MenuMap mm WHERE mm.menuKey = :menuKey");
+			Query qry = em.createQuery("from MenuMap mm WHERE lower(mm.menuKey) = lower(:menuKey) ");
 			qry.setParameter("menuKey", menuKey);
 			List<MenuMap> menumaps = qry.getResultList();
 			if(menumaps!=null &&  !menumaps.isEmpty())

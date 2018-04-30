@@ -153,7 +153,7 @@ public class UpdateProcessorCron {
 		
 			timerService.createCalendarTimer(expression, timerConf);
 			
-			logger.info(TerminalColorCodes.ANSI_RED_BACKGROUND+TerminalColorCodes.ANSI_WHITE
+			/*logger.info(TerminalColorCodes.ANSI_RED_BACKGROUND+TerminalColorCodes.ANSI_WHITE
 					+TIMER_NAME+" --> [ "
 					.concat( second_expression)
 					.concat( " ")
@@ -167,7 +167,7 @@ public class UpdateProcessorCron {
 					.concat( " ")
 					.concat( year_expression)
 					.concat( " ]")
-					+TerminalColorCodes.ANSI_RESET);
+					+TerminalColorCodes.ANSI_RESET);*/
 		
 		}catch(Exception e){
 			logger.error(e.getMessage(), e);
@@ -186,6 +186,7 @@ public class UpdateProcessorCron {
 			String TELEGRAM_SEND_MESSAGE_URL = configEJB.getOrCreateConfigValue(ConfigurationEJBI.TELEGRAM_SEND_MESSAGE_URL, "#{TELEGRAM_API_BASE_URL}/bot#{TELEGRAM_ACCESS_TOKEN}/sendMessage");
 			TELEGRAM_SEND_MESSAGE_URL = TELEGRAM_SEND_MESSAGE_URL.replaceAll("\\#\\{TELEGRAM_API_BASE_URL\\}", TELEGRAM_API_BASE_URL);
 			TELEGRAM_SEND_MESSAGE_URL = TELEGRAM_SEND_MESSAGE_URL.replaceAll("\\#\\{TELEGRAM_ACCESS_TOKEN\\}", TELEGRAM_ACCESS_TOKEN);
+			String botName = configEJB.getOrCreateConfigValue(ConfigurationEJBI.BOT_NAME, "honda_owners_club_bot");
 			
 			for(Update update : updates){
 				
@@ -194,8 +195,13 @@ public class UpdateProcessorCron {
 					Message message  = update.getMessage();
 					Chat chat = message.getChat();
 					updateEJB.updateStatus(Status.PROCESSING, update.getId());
-					
-					MenuMap responsemap = menuMapEJB.findMenu(message.getText());
+					String sourceMsg = message.getText();
+					if(sourceMsg!=null && sourceMsg!=null){
+						if(sourceMsg.trim().contains("@".concat(botName))){
+							sourceMsg = sourceMsg.replaceAll("@".concat(botName), "").trim().toLowerCase();
+						}
+					}
+					MenuMap responsemap = menuMapEJB.findMenu(sourceMsg);
 					String respText = null;
 					if(responsemap!=null){
 						respText = responsemap.getResponse();
