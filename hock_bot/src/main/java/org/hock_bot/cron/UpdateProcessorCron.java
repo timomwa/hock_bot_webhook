@@ -246,7 +246,7 @@ public class UpdateProcessorCron {
 							inlineKeyboardButtonRow.put( keyboardButton );
 							
 							
-							if((rowCounter)%3==0){
+							if((rowCounter)%2==0){
 								inline_keyboard.put( inlineKeyboardButtonRow );
 								inlineKeyboardButtonRow = new JSONArray();
 							}
@@ -265,7 +265,7 @@ public class UpdateProcessorCron {
 						
 					}
 					
-					logger.info(" req>> ::: "+jsob.toString());
+					logger.info("xx req>> ::: "+jsob.toString());
 					Content content = Request.Post(TELEGRAM_SEND_MESSAGE_URL).bodyString(jsob.toString() ,ContentType.create("application/json", Consts.UTF_8.name())).execute().returnContent();
 					String response = content.asString();
 					
