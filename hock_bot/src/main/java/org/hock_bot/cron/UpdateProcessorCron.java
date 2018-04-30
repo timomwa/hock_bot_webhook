@@ -25,11 +25,15 @@ import org.apache.log4j.Logger;
 import org.hock_bot.ejb.ConfigurationEJBI;
 import org.hock_bot.ejb.MenuMapEJBI;
 import org.hock_bot.ejb.UpdateEJBI;
+import org.hock_bot.ejb.VehicleMakeEJBI;
+import org.hock_bot.ejb.VehicleModelEJBI;
 import org.hock_bot.model.Chat;
 import org.hock_bot.model.MenuMap;
 import org.hock_bot.model.Message;
 import org.hock_bot.model.Status;
 import org.hock_bot.model.Update;
+import org.hock_bot.model.VehicleMake;
+import org.hock_bot.model.VehicleModel;
 import org.hock_bot.util.TerminalColorCodes;
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -47,6 +51,12 @@ public class UpdateProcessorCron {
 	
 	@EJB
 	private MenuMapEJBI menuMapEJB;
+	
+	@EJB
+	private VehicleModelEJBI vehiceModelEJB;
+	
+	@EJB
+	private VehicleMakeEJBI vehiceMakelEJB;
 	
 	private Logger logger = Logger.getLogger(getClass());
 	
@@ -189,6 +199,8 @@ public class UpdateProcessorCron {
 			TELEGRAM_SEND_MESSAGE_URL = TELEGRAM_SEND_MESSAGE_URL.replaceAll("\\#\\{TELEGRAM_ACCESS_TOKEN\\}", TELEGRAM_ACCESS_TOKEN);
 			String botName = configEJB.getOrCreateConfigValue(ConfigurationEJBI.BOT_NAME, "honda_owners_club_bot");
 			
+			List<VehicleModel> vehicleModels = vehiceModelEJB.getByMakeName("honda");
+			
 			for(Update update : updates){
 				
 				try{
@@ -219,14 +231,18 @@ public class UpdateProcessorCron {
 					jsob.put("method", "sendmessage");
 					
 					if(sourceMsg!=null && sourceMsg.equalsIgnoreCase("/service")){
-						JSONObject keyboardButton  = new JSONObject();
-						keyboardButton.put("text", "Honda");
-						keyboardButton.put("request_contact", true);
-						keyboardButton.put("request_location", false);
+						
+						JSONArray keyboardbuttons = new JSONArray();
+						for(VehicleModel model : vehicleModels){
+							JSONObject keyboardButton  = new JSONObject();
+							keyboardButton.put("text", model.getName());
+							keyboardButton.put("request_contact", false);
+							keyboardButton.put("request_location", false);
+							keyboardbuttons.put( keyboardButton );
+						}
 						
 						JSONArray keyboard = new JSONArray();
-						JSONArray keyboardbuttons = new JSONArray();
-						keyboardbuttons.put( keyboardButton );
+						
 						
 						keyboard.put( keyboardbuttons );
 						
