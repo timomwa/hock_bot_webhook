@@ -245,7 +245,7 @@ public class UpdateProcessorCron {
 						
 						JSONObject keyboardButtonNext  = new JSONObject();
 						keyboardButtonNext.put("text", ">>");
-						keyboardButtonNext.put("url", "start="+(start+size)+"&size="+size);
+						//keyboardButtonNext.put("url", "start="+(start+size)+"&size="+size);
 						keyboardButtonNext.put("callback_data", "start="+(start+size)+"&size="+size);
 						inlineKeyboardButtons.put( keyboardButtonNext );
 				
