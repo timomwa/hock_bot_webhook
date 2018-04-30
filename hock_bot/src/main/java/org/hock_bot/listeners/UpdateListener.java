@@ -72,6 +72,7 @@ public class UpdateListener {
 				org.hock_bot.model.User user_ = userEJB.saveOrCreate(user);
 				org.hock_bot.model.Chat chat_ = chatEJB.saveOrCreate(chat);
 				org.hock_bot.model.Message message_ = messageEJB.createNew(user_, chat_, message, replyToMessage);
+				org.hock_bot.model.Update update_ = updateEJB.saveNew(message_, update);
 				
 			}
 			
