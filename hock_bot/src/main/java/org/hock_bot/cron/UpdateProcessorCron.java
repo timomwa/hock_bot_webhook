@@ -229,42 +229,64 @@ public class UpdateProcessorCron {
 					
 					if(callbackQuery!=null){
 						url = TELEGRAM_EDIT_MESSAGE_URL;
-						
-						
 						Message message_C = callbackQuery.getMessage();
 						Chat chat_C = message_C.getChat();
 						String data = callbackQuery.getData();
-						String model = "";
-						if(data!=null && !data.trim().isEmpty()){
-							try{
-								model = data.split("modelName")[1].replaceAll("\\=", "").replaceAll("=", "");
-							}catch(Exception e){
-								logger.error(e.getMessage(), e);
-							}
-						}
 						
-						jsob.put("chat_id", chat_C.getChatId());
-						jsob.put("message_id", message_C.getMessageId());
-						jsob.put("text", "Which year is your Honda "+model+" ?");
-						
-						for(int i = 1995; i<2020; i++){
-							
-							JSONObject keyboardButton  = new JSONObject();
-							keyboardButton.put("text", String.valueOf( i) );
-							keyboardButton.put("callback_data", String.valueOf( i ));
-							inlineKeyboardButtonRow.put( keyboardButton );
-							
-							
-							if((rowCounter)%3==0){
-								inline_keyboard.put( inlineKeyboardButtonRow );
-								inlineKeyboardButtonRow = new JSONArray();
+						if(data.contains("modelName")){
+							String model = "";
+							if(data!=null && !data.trim().isEmpty() ){
+								try{
+									model = data.split("modelName")[1].replaceAll("\\=", "").replaceAll("=", "");
+								}catch(Exception e){
+									logger.error(e.getMessage(), e);
+								}
 							}
 							
-							rowCounter++;
+							jsob.put("chat_id", chat_C.getChatId());
+							jsob.put("message_id", message_C.getMessageId());
+							jsob.put("text", "Which year is your Honda "+model+" ?");
+							
+							for(int i = 1980; i<2020; i++){
+								
+								JSONObject keyboardButton  = new JSONObject();
+								keyboardButton.put("text",  String.valueOf(i)  );
+								JSONObject callBackData = new JSONObject();
+								callBackData.put("year", i);
+								callBackData.put("model", model);
+								keyboardButton.put("callback_data", callBackData.toString() );
+								inlineKeyboardButtonRow.put( keyboardButton );
+								
+								
+								if((rowCounter)%5==0){
+									inline_keyboard.put( inlineKeyboardButtonRow );
+									inlineKeyboardButtonRow = new JSONArray();
+								}
+								
+								rowCounter++;
+								
+							}
+							
+							inline_keyboard.put( inlineKeyboardButtonRow );
+							
+						}else if(data.contains("year")){
+							
+							JSONObject callbackData = new JSONObject(data);
+							String model = callbackData.getString("model");
+							int year = callbackData.getInt("year");
+							
+							jsob.put("chat_id", chat_C.getChatId());
+							jsob.put("message_id", message_C.getMessageId());
+							String message_resp = "Standard service for a "+year+" Honda ".concat( model ).concat(";\n");
+							message_resp = message_resp.concat( "--------------------------------------------------" );
+							message_resp = message_resp.concat( "Engine Oil   - Kes 2,500 \n" );
+							message_resp = message_resp.concat( "Oil filter   - Kes   500 \n" );
+							message_resp = message_resp.concat( "Cabin filter - Kes 1,500 \n" );
+							message_resp = message_resp.concat( "Total		  - Kes 4,500" );
+							message_resp = message_resp.concat( "*These are just estimates. Recommended service interval is 10,000kms or 3 months. Otherwise, refer to owner's manual*" );
+							jsob.put("text", message_resp);
 							
 						}
-						
-						inline_keyboard.put( inlineKeyboardButtonRow );
 						
 					}else if(message!=null){
 						
@@ -303,7 +325,10 @@ public class UpdateProcessorCron {
 								
 								JSONObject keyboardButton  = new JSONObject();
 								keyboardButton.put("text", model.getName());
-								keyboardButton.put("callback_data", "modelId=".concat( String.valueOf( model.getId() ) ).concat("&modelName=".concat(  model.getName() )));
+								JSONObject callBackData = new JSONObject();
+								callBackData.put("modelId", model.getId());
+								callBackData.put("modelName", model.getName());
+								keyboardButton.put("callback_data", callBackData.toString());
 								inlineKeyboardButtonRow.put( keyboardButton );
 								
 								
@@ -325,7 +350,7 @@ public class UpdateProcessorCron {
 					JSONObject reply_markup = new JSONObject();
 					if(inline_keyboard!=null && inline_keyboard.length()>0){
 						reply_markup.put("inline_keyboard", inline_keyboard);
-						//reply_markup.put("resize_keyboard", true);
+						reply_markup.put("resize_keyboard", true);
 						reply_markup.put("one_time_keyboard", true);
 						reply_markup.put("selective", false);
 						jsob.put("reply_markup", reply_markup);
