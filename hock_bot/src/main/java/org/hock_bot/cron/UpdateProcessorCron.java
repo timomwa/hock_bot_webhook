@@ -200,7 +200,7 @@ public class UpdateProcessorCron {
 			String botName = configEJB.getOrCreateConfigValue(ConfigurationEJBI.BOT_NAME, "honda_owners_club_bot");
 			
 			int start = 0;
-			int size = 5;
+			int size = 500;
 			List<VehicleModel> vehicleModels = vehiceModelEJB.getByMakeName("honda",start,size); 
 			
 			for(Update update : updates){
@@ -234,30 +234,31 @@ public class UpdateProcessorCron {
 					
 					if(sourceMsg!=null && sourceMsg.equalsIgnoreCase("/service")){
 						
-						JSONArray inlineKeyboardButtons = new JSONArray();
+						JSONArray inlineKeyboardButtonRow = new JSONArray();
+						JSONArray inline_keyboard = new JSONArray();
 						
+						int rowCounter = 0;
 						for(VehicleModel model : vehicleModels){
+							
 							JSONObject keyboardButton  = new JSONObject();
 							keyboardButton.put("text", model.getName());
 							keyboardButton.put("callback_data", "modelId=".concat( String.valueOf( model.getId() ) ).concat("&modelName=".concat(  model.getName() )));
-							inlineKeyboardButtons.put( keyboardButton );
+							inlineKeyboardButtonRow.put( keyboardButton );
+							
+							
+							if((rowCounter)%3==0){
+								inline_keyboard.put( inlineKeyboardButtonRow );
+								inlineKeyboardButtonRow = new JSONArray();
+							}
+							
+							rowCounter++;
 						}
 						
-						JSONObject keyboardButtonNext  = new JSONObject();
-						keyboardButtonNext.put("text", ">>");
-						//keyboardButtonNext.put("url", "start="+(start+size)+"&size="+size);
-						keyboardButtonNext.put("callback_data", "start="+(start+size)+"&size="+size);
-						inlineKeyboardButtons.put( keyboardButtonNext );
-				
-						
-						JSONArray inline_keyboard = new JSONArray();
-						
-						
-						inline_keyboard.put( inlineKeyboardButtons );
+						inline_keyboard.put( inlineKeyboardButtonRow );
 						
 						JSONObject reply_markup = new JSONObject();
 						reply_markup.put("inline_keyboard", inline_keyboard);
-						//reply_markup.put("resize_keyboard", true);
+						reply_markup.put("resize_keyboard", true);
 						reply_markup.put("one_time_keyboard", true);
 						reply_markup.put("selective", false);
 						jsob.put("reply_markup", reply_markup);
