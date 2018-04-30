@@ -234,14 +234,8 @@ public class UpdateProcessorCron {
 						String data = callbackQuery.getData();
 						
 						if(data.contains("modelName")){
-							String model = "";
-							if(data!=null && !data.trim().isEmpty() ){
-								try{
-									model = data.split("modelName")[1].replaceAll("\\=", "").replaceAll("=", "");
-								}catch(Exception e){
-									logger.error(e.getMessage(), e);
-								}
-							}
+							JSONObject dataJSON = new JSONObject(data);
+							String model = dataJSON.getString("modelName");
 							
 							jsob.put("chat_id", chat_C.getChatId());
 							jsob.put("message_id", message_C.getMessageId());
@@ -277,13 +271,13 @@ public class UpdateProcessorCron {
 							
 							jsob.put("chat_id", chat_C.getChatId());
 							jsob.put("message_id", message_C.getMessageId());
-							String message_resp = "Standard service for a "+year+" Honda ".concat( model ).concat(";\n");
-							message_resp = message_resp.concat( "--------------------------------------------------" );
+							String message_resp = "Standard service: "+year+" Honda ".concat( model ).concat(";\n");
+							message_resp = message_resp.concat( "--------------------------------------------------\n\n" );
 							message_resp = message_resp.concat( "Engine Oil   - Kes 2,500 \n" );
 							message_resp = message_resp.concat( "Oil filter   - Kes   500 \n" );
 							message_resp = message_resp.concat( "Cabin filter - Kes 1,500 \n" );
-							message_resp = message_resp.concat( "Total		  - Kes 4,500" );
-							message_resp = message_resp.concat( "*These are just estimates. Recommended service interval is 10,000kms or 3 months. Otherwise, refer to owner's manual*" );
+							message_resp = message_resp.concat( "Total		  - Kes 4,500 \n\n" );
+							message_resp = message_resp.concat( "*These are just estimates. Recommended service interval is 10,000kms or 3 months. Otherwise, refer to owner's manual*\n" );
 							jsob.put("text", message_resp);
 							
 						}
