@@ -23,7 +23,7 @@ public class VehicleModelDAOImpl extends GenericDAOImpl<VehicleModel, Long> impl
 			Query query = em.createQuery("from VehicleModel vm WHERE lower(vm.make.name) = lower(:makeName) ");
 			query.setParameter("makeName", makeName);
 			query.setFirstResult(start);
-			query.setMaxResults(size)
+			query.setMaxResults(size);
 			vehicleModels = query.getResultList();
 			
 		}catch(NoResultException nre){
