@@ -1,5 +1,8 @@
 package org.hock_bot.ejb;
 
+import java.util.Arrays;
+import java.util.List;
+
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 
@@ -36,6 +39,22 @@ public class UpdateEJBImpl implements UpdateEJBI {
 		}
 		
 		return update_;
+	}
+
+	@Override
+	public List<org.hock_bot.model.Update> listUnprocessed(int size) {
+		Status[] statuses = {Status.FAILED_TEMPORARILY, Status.JUST_IN};
+		return updateDAO.findByType(Arrays.asList(statuses), size);
+	}
+
+	@Override
+	public void updateStatus(Status status, Long updateId) {
+		updateDAO.updateStatus(status, updateId);
+	}
+
+	@Override
+	public void increaseRetryCount(Long updateId) {
+		updateDAO.increaseRetryCount(updateId);
 	}
 
 }

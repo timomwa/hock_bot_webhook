@@ -47,9 +47,22 @@ public class Update extends AbstractEntity {
 	@Enumerated(EnumType.STRING)
 	private Status status;
 	
+	
+	@Column(name="retry_count", nullable=false)
+	private Integer retryCount;
+	
+	@Column(name="max_retries", nullable=false)
+	private Integer maxRetries;
+	
 	@PreUpdate
 	@PrePersist
 	public void update(){
+		
+		if(maxRetries==null)
+			maxRetries = 3;
+		
+		if(retryCount==null)
+			retryCount = 0;
 		
 		if(timeStamp==null)
 			timeStamp = new Date();
@@ -97,6 +110,26 @@ public class Update extends AbstractEntity {
 
 	public void setStatus(Status status) {
 		this.status = status;
+	}
+
+
+	public Integer getRetryCount() {
+		return retryCount;
+	}
+
+
+	public void setRetryCount(Integer retryCount) {
+		this.retryCount = retryCount;
+	}
+
+
+	public Integer getMaxRetries() {
+		return maxRetries;
+	}
+
+
+	public void setMaxRetries(Integer maxRetries) {
+		this.maxRetries = maxRetries;
 	}
 	
 	
