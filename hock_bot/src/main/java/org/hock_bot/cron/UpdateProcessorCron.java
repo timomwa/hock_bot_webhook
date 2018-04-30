@@ -320,17 +320,15 @@ public class UpdateProcessorCron {
 							
 							
 						}
-						
-						JSONObject reply_markup = new JSONObject();
-						if(inline_keyboard!=null && inline_keyboard.length()>0){
-							reply_markup.put("inline_keyboard", inline_keyboard);
-							//reply_markup.put("resize_keyboard", true);
-							reply_markup.put("one_time_keyboard", true);
-							reply_markup.put("selective", false);
-							jsob.put("reply_markup", reply_markup);
-						}
-						
-						
+					}
+					
+					JSONObject reply_markup = new JSONObject();
+					if(inline_keyboard!=null && inline_keyboard.length()>0){
+						reply_markup.put("inline_keyboard", inline_keyboard);
+						//reply_markup.put("resize_keyboard", true);
+						reply_markup.put("one_time_keyboard", true);
+						reply_markup.put("selective", false);
+						jsob.put("reply_markup", reply_markup);
 					}
 					
 					logger.info("  xxyy req url-> ["+url+"] >>>> ::: "+jsob.toString());
