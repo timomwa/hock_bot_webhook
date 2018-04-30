@@ -7,6 +7,8 @@ import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToOne;
 import javax.persistence.PrePersist;
 import javax.persistence.PreUpdate;
 import javax.persistence.Table;
@@ -32,7 +34,8 @@ public class Update extends AbstractEntity {
     
 	
 	@JsonProperty(ConfigurationI.MESSAGE_FIELD)
-    @JoinColumn(name="message_id")
+	@OneToOne
+	@JoinColumn(name="message_id")
 	private Message message;
 	
 	
