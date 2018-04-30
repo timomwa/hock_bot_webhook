@@ -213,6 +213,11 @@ public class UpdateProcessorCron {
 					
 					JSONObject jsob  = new JSONObject();
 					
+					jsob.put("chat_id", chat.getChatId());
+					jsob.put("text", respText);
+					jsob.put("reply_to_message_id", message.getMessageId());
+					jsob.put("method", "sendmessage");
+					
 					if(sourceMsg!=null && sourceMsg.equalsIgnoreCase("/service")){
 						JSONObject keyboardButton  = new JSONObject();
 						keyboardButton.put("text", "Honda");
@@ -225,17 +230,12 @@ public class UpdateProcessorCron {
 						
 						keyboard.put( keyboardbuttons );
 						
-						jsob.put("keyboard", keyboard);
-						jsob.put("resize_keyboard", true);
-						jsob.put("one_time_keyboard", false);
-						jsob.put("selective", false);
-						jsob.put("method", "sendmessage");
+						JSONObject reply_markup = new JSONObject();
+						reply_markup.put("keyboard", keyboard);
+						reply_markup.put("resize_keyboard", true);
+						reply_markup.put("one_time_keyboard", false);
+						reply_markup.put("selective", false);
 						
-					}else{
-						jsob.put("chat_id", chat.getChatId());
-						jsob.put("text", respText);
-						jsob.put("reply_to_message_id", message.getMessageId());
-						jsob.put("method", "sendmessage");
 					}
 					
 					logger.info(" req>> ::: "+jsob.toString());
