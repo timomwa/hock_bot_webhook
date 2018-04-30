@@ -265,11 +265,11 @@ public class UpdateProcessorCron {
 						
 					}
 					
-					logger.info("xx req>> ::: "+jsob.toString());
+					logger.info(" xxyy req>>>> ::: "+jsob.toString());
 					Content content = Request.Post(TELEGRAM_SEND_MESSAGE_URL).bodyString(jsob.toString() ,ContentType.create("application/json", Consts.UTF_8.name())).execute().returnContent();
 					String response = content.asString();
 					
-					logger.info(" <<::: "+response);
+					logger.info(" xxxyyy <<<< ::: "+response);
 					
 					JSONObject resp = new JSONObject(response);
 					
