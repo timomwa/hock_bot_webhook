@@ -31,6 +31,7 @@ import org.hock_bot.model.Message;
 import org.hock_bot.model.Status;
 import org.hock_bot.model.Update;
 import org.hock_bot.util.TerminalColorCodes;
+import org.json.JSONArray;
 import org.json.JSONObject;
 
 
@@ -209,11 +210,32 @@ public class UpdateProcessorCron {
 					if(respText==null){
 						respText = "Sorry, I don't have a response for that at the moment. Type / to see a list of available options";
 					}
+					
 					JSONObject jsob  = new JSONObject();
-					jsob.put("chat_id", chat.getChatId());
-					jsob.put("text", respText);
-					jsob.put("reply_to_message_id", message.getMessageId());
-					jsob.put("method", "sendmessage");
+					
+					if(sourceMsg!=null && sourceMsg.equalsIgnoreCase("/service")){
+						JSONObject keyboardButton  = new JSONObject();
+						keyboardButton.put("text", "Honda");
+						keyboardButton.put("request_contact", true);
+						keyboardButton.put("request_location", false);
+						
+						JSONArray keyboard = new JSONArray();
+						JSONArray keyboardbuttons = new JSONArray();
+						keyboardbuttons.put( keyboardButton );
+						
+						keyboard.put( keyboardbuttons );
+						
+						jsob.put("keyboard", keyboard);
+						jsob.put("resize_keyboard", true);
+						jsob.put("one_time_keyboard", false);
+						jsob.put("selective", false);
+						
+					}else{
+						jsob.put("chat_id", chat.getChatId());
+						jsob.put("text", respText);
+						jsob.put("reply_to_message_id", message.getMessageId());
+						jsob.put("method", "sendmessage");
+					}
 					
 					logger.info(" req>> ::: "+jsob.toString());
 					Content content = Request.Post(TELEGRAM_SEND_MESSAGE_URL).bodyString(jsob.toString() ,ContentType.create("application/json", Consts.UTF_8.name())).execute().returnContent();
