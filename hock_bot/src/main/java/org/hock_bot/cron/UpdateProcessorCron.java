@@ -196,7 +196,7 @@ public class UpdateProcessorCron {
 					jsob.put("method", "sendmessage");
 					
 					logger.info(" req>> ::: "+jsob.toString());
-					Content content = Request.Get(TELEGRAM_SEND_MESSAGE_URL).bodyString(jsob.toString() ,ContentType.create("application/json", Consts.UTF_8.name())).execute().returnContent();
+					Content content = Request.Post(TELEGRAM_SEND_MESSAGE_URL).bodyString(jsob.toString() ,ContentType.create("application/json", Consts.UTF_8.name())).execute().returnContent();
 					String response = content.asString();
 					
 					logger.info(" <<::: "+response);
