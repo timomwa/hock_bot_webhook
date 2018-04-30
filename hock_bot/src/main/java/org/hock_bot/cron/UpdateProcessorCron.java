@@ -232,22 +232,22 @@ public class UpdateProcessorCron {
 					
 					if(sourceMsg!=null && sourceMsg.equalsIgnoreCase("/service")){
 						
-						JSONArray keyboardbuttons = new JSONArray();
+						JSONArray inlineKeyboardButtons = new JSONArray();
 						for(VehicleModel model : vehicleModels){
 							JSONObject keyboardButton  = new JSONObject();
 							keyboardButton.put("text", model.getName());
-							keyboardButton.put("request_contact", false);
-							keyboardButton.put("request_location", false);
-							keyboardbuttons.put( keyboardButton );
+							//keyboardButton.put("url", false);
+							keyboardButton.put("callback_data", "modelId=".concat( String.valueOf( model.getId() ) ).concat("&modelName=".concat(  model.getName() )));
+							inlineKeyboardButtons.put( keyboardButton );
 						}
 						
-						JSONArray keyboard = new JSONArray();
+						JSONArray inline_keyboard = new JSONArray();
 						
 						
-						keyboard.put( keyboardbuttons );
+						inline_keyboard.put( inlineKeyboardButtons );
 						
 						JSONObject reply_markup = new JSONObject();
-						reply_markup.put("keyboard", keyboard);
+						reply_markup.put("inline_keyboard", inline_keyboard);
 						//reply_markup.put("resize_keyboard", true);
 						reply_markup.put("one_time_keyboard", true);
 						reply_markup.put("selective", false);
