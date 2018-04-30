@@ -338,6 +338,11 @@ public class UpdateProcessorCron {
 							
 							
 							
+						}else if(sourceMsg!=null && sourceMsg.equalsIgnoreCase("/faq")){
+							JSONObject replyKeyboardRemove = new JSONObject();
+							replyKeyboardRemove.put("remove_keyboard", true);
+							replyKeyboardRemove.put("selective", false);
+							jsob.put("reply_markup", replyKeyboardRemove);
 						}
 					}
 					
