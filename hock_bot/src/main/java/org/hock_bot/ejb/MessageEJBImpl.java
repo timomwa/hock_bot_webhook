@@ -26,7 +26,7 @@ public class MessageEJBImpl implements MessageEJBI {
 			message_ = new Message();
 			message_.setChat(chat_);
 			message_.setDate(message.getDate());
-			message_.setFrom(user_);
+			message_.setFromUser(user_);
 			message_.setMessageId(message.getMessageId());
 			message_.setText(message.getText());
 			message_ =  messageDAO.save(message_);

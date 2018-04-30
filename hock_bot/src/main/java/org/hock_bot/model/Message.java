@@ -19,7 +19,7 @@ public class Message extends AbstractEntity {
 	
 	@JsonProperty(ConfigurationI.FROM_FIELD)
 	@JoinColumn(name="user_id")
-	private User from;
+	private User fromUser;
 	
 	@JsonProperty(ConfigurationI.DATE_FIELD)
 	@Column(name="date")
@@ -41,12 +41,12 @@ public class Message extends AbstractEntity {
 		this.messageId = messageId;
 	}
 
-	public User getFrom() {
-		return from;
+	public User getFromUser() {
+		return fromUser;
 	}
 
-	public void setFrom(User from) {
-		this.from = from;
+	public void setFromUser(User from) {
+		this.fromUser = from;
 	}
 
 	public Integer getDate() {
