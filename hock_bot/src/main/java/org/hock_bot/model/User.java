@@ -11,7 +11,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 
 @Entity
-@Table(name = "bot_message", catalog = ConfigurationI.CATALOG)
+@Table(name = "bot_user", catalog = ConfigurationI.CATALOG)
 public class User extends  AbstractEntity {
 
 	/**
