@@ -213,6 +213,9 @@ public class UpdateProcessorCron {
 			int start = 0;
 			int size = 500;
 			List<VehicleModel> vehicleModels = vehiceModelEJB.getByMakeName("honda",start,size); 
+			String[] positionsArray = {"Chariman", "Vice Chairman", "Secretary", "Treasurer", "Events Organizer", "Design, Promotions & Branding", "ICT Department"};
+			List<String> positions = Arrays.asList(positionsArray);
+			
 			
 			for(Update update : updates){
 				
@@ -315,10 +318,10 @@ public class UpdateProcessorCron {
 								reply_markup.put("selective", false);
 								jsob.put("reply_markup", reply_markup);
 								
-							}else{
+							}else if(data.contains("NO")){
+								
 								jsob.put("chat_id", chat_C.getChatId());
-								jsob.put("reply_to_message_id", message.getMessageId());
-								jsob.put("method", "sendmessage");
+								jsob.put("message_id", message_C.getMessageId());
 								jsob.put("text", "Ok. Thank you "+update.getCallbackQuery().getFromUser().getUserName()+". However, you can always take part in the nomination whenever you change your mind.");
 								
 							}
@@ -334,8 +337,7 @@ public class UpdateProcessorCron {
 								msg = "Ok, "+update.getCallbackQuery().getFromUser().getUserName()+", which position would you like to vie for?";
 								jsob.put("text", msg);
 								
-								String[] a = {"Chariman", "Vice Chairman", "Secretary", "Treasurer", "Events Organizer", "Design, Promotions & Branding", "ICT Department"};
-								List<String> positions = Arrays.asList(a);
+								
 								
 								jsob.put("chat_id", chat_C.getChatId());
 								jsob.put("message_id", message_C.getMessageId());
@@ -370,6 +372,16 @@ public class UpdateProcessorCron {
 								msg = "Ok, "+update.getCallbackQuery().getFromUser().getUserName()+", who in the group would you like to nominate?";
 							
 							}
+							
+						}else if( containsAny(data, positions) ){
+							
+							
+							String positionChosen = getChosen(data, positions);
+							
+							jsob.put("chat_id", chat_C.getChatId());
+							jsob.put("message_id", message_C.getMessageId());
+							jsob.put("text", "Thank you "+update.getCallbackQuery().getFromUser().getUserName()+". Your self nomination for the "+positionChosen+" has been received now waiting approval.");
+						
 							
 						}
 						
@@ -505,6 +517,30 @@ public class UpdateProcessorCron {
 			logger.error(e.getMessage(), e);
 		}
 		
+	}
+
+
+
+	private String getChosen(String data, List<String> positions) {
+		
+		for(String position : positions){
+			if(data.contains(position)){
+				return position;
+			}
+		}
+		return "";
+	}
+
+
+
+	private boolean containsAny(String data, List<String> positions) {
+		
+		for(String position : positions){
+			if(data.contains(position)){
+				return true;
+			}
+		}
+		return false;
 	}
 
 }
