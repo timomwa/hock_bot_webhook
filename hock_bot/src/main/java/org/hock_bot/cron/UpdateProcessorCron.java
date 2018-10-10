@@ -339,12 +339,12 @@ public class UpdateProcessorCron {
 								
 								jsob.put("chat_id", chat_C.getChatId());
 								jsob.put("message_id", message_C.getMessageId());
-								jsob.put("text", "Would you like to nominate yourself or someone else?");
+								jsob.put("text", msg);
 								
 								for(String position : positions){
 								
 									JSONObject keyboardButton  = new JSONObject();
-									keyboardButton.put("position", position);
+									keyboardButton.put("text", position);
 									JSONObject callBackData = new JSONObject();
 									callBackData.put("position", position);
 									keyboardButton.put("callback_data", callBackData.toString());
