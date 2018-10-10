@@ -1,6 +1,7 @@
 package org.hock_bot.cron;
 
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -313,7 +314,9 @@ public class UpdateProcessorCron {
 						
 						logger.info(" sourceMsg ::: "+sourceMsg);
 						
-						if(sourceMsg!=null && sourceMsg.equalsIgnoreCase("/service")){
+						if(sourceMsg!=null && sourceMsg.equalsIgnoreCase("/nomination")){
+							
+						}else if(sourceMsg!=null && sourceMsg.equalsIgnoreCase("/service")){
 							
 							for(VehicleModel model : vehicleModels){
 								
@@ -346,14 +349,43 @@ public class UpdateProcessorCron {
 						}
 					}
 					
-					JSONObject reply_markup = new JSONObject();
+					String[] a = {"YES", "NO"};
+					List<String> yesandNo = Arrays.asList(a);
+					
+					for(String yesNo : yesandNo){
+					
+						JSONObject keyboardButton  = new JSONObject();
+						keyboardButton.put("text", yesNo);
+						JSONObject callBackData = new JSONObject();
+						callBackData.put("interested", yesNo);
+						keyboardButton.put("callback_data", callBackData.toString());
+						
+						inlineKeyboardButtonRow = new JSONArray();
+						inlineKeyboardButtonRow.put( keyboardButton );
+						inline_keyboard.put( inlineKeyboardButtonRow );
+						
+						JSONObject reply_markup  = new JSONObject();
+						
+						reply_markup.put("inline_keyboard", inline_keyboard);
+						reply_markup.put("resize_keyboard", true);
+						reply_markup.put("one_time_keyboard", true);
+						reply_markup.put("selective", false);
+						jsob.put("reply_markup", reply_markup);
+						
+					}
+					
+					
+					
+					
+					
+					/*
 					if(inline_keyboard!=null && inline_keyboard.length()>0){
 						reply_markup.put("inline_keyboard", inline_keyboard);
 						reply_markup.put("resize_keyboard", true);
 						reply_markup.put("one_time_keyboard", true);
 						reply_markup.put("selective", false);
 						jsob.put("reply_markup", reply_markup);
-					}
+					}*/
 					
 					logger.info("  xxyy req url-> ["+url+"] >>>> ::: "+jsob.toString());
 					Content content = Request.Post(url).bodyString(jsob.toString() ,ContentType.create("application/json", Consts.UTF_8.name())).execute().returnContent();
