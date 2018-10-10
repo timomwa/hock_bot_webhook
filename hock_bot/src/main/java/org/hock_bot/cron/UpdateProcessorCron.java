@@ -289,6 +289,10 @@ public class UpdateProcessorCron {
 								String[] a = {"Myself", "Someone Else"};
 								List<String> meOrSomeoneElse = Arrays.asList(a);
 								
+								jsob.put("chat_id", chat_C.getChatId());
+								jsob.put("message_id", message_C.getMessageId());
+								jsob.put("text", "Would you like to nominate yourself or someone else?");
+								
 								for(String myselfSomeone : meOrSomeoneElse){
 								
 									JSONObject keyboardButton  = new JSONObject();
@@ -301,16 +305,15 @@ public class UpdateProcessorCron {
 									inlineKeyboardButtonRow.put( keyboardButton );
 									inline_keyboard.put( inlineKeyboardButtonRow );
 									
-									JSONObject reply_markup  = new JSONObject();
-									
-									reply_markup.put("inline_keyboard", inline_keyboard);
-									reply_markup.put("resize_keyboard", true);
-									reply_markup.put("one_time_keyboard", true);
-									reply_markup.put("selective", false);
-									jsob.put("text", "Would you like to nominate yourself or someone else?");
-									jsob.put("reply_markup", reply_markup);
-									
 								}
+								
+								JSONObject reply_markup  = new JSONObject();
+								
+								reply_markup.put("inline_keyboard", inline_keyboard);
+								reply_markup.put("resize_keyboard", true);
+								reply_markup.put("one_time_keyboard", true);
+								reply_markup.put("selective", false);
+								jsob.put("reply_markup", reply_markup);
 							}
 							
 						}
@@ -363,16 +366,15 @@ public class UpdateProcessorCron {
 								inlineKeyboardButtonRow.put( keyboardButton );
 								inline_keyboard.put( inlineKeyboardButtonRow );
 								
-								JSONObject reply_markup  = new JSONObject();
-								
-								reply_markup.put("inline_keyboard", inline_keyboard);
-								reply_markup.put("resize_keyboard", true);
-								reply_markup.put("one_time_keyboard", true);
-								reply_markup.put("selective", false);
-								jsob.put("text", "Dear member. Time has come to hand in the reighns of this excellent to group to new officials. It is with this regard, we need to hold an AGM to elect new office bearers. Would you like to nominate yourself or someone for an official position?");
-								jsob.put("reply_markup", reply_markup);
-								
 							}
+							
+							JSONObject reply_markup  = new JSONObject();
+							reply_markup.put("inline_keyboard", inline_keyboard);
+							reply_markup.put("resize_keyboard", true);
+							reply_markup.put("one_time_keyboard", true);
+							reply_markup.put("selective", false);
+							jsob.put("text", "Dear member. Time has come to hand in the reighns of this excellent to group to new officials. It is with this regard, we need to hold an AGM to elect new office bearers. Would you like to nominate yourself or someone for an official position?");
+							jsob.put("reply_markup", reply_markup);
 							
 						}else if(sourceMsg!=null && sourceMsg.equalsIgnoreCase("/service")){
 							
