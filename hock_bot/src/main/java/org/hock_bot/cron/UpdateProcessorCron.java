@@ -4,7 +4,6 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
-import java.util.concurrent.atomic.AtomicInteger;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
@@ -25,6 +24,7 @@ import org.apache.log4j.Logger;
 import org.hock_bot.ejb.CallbackQueryEJBI;
 import org.hock_bot.ejb.ConfigurationEJBI;
 import org.hock_bot.ejb.MenuMapEJBI;
+import org.hock_bot.ejb.VoteEJBI;
 import org.hock_bot.ejb.UpdateEJBI;
 import org.hock_bot.ejb.VehicleMakeEJBI;
 import org.hock_bot.ejb.VehicleModelEJBI;
@@ -32,6 +32,7 @@ import org.hock_bot.model.CallbackQuery;
 import org.hock_bot.model.Chat;
 import org.hock_bot.model.MenuMap;
 import org.hock_bot.model.Message;
+import org.hock_bot.model.Vote;
 import org.hock_bot.model.Status;
 import org.hock_bot.model.Update;
 import org.hock_bot.model.VehicleMake;
@@ -50,6 +51,9 @@ public class UpdateProcessorCron {
 	
 	@EJB
 	private UpdateEJBI updateEJB;
+	
+	@EJB
+	private VoteEJBI nomineeEJB;
 	
 	@EJB
 	private MenuMapEJBI menuMapEJB;
@@ -332,51 +336,93 @@ public class UpdateProcessorCron {
 							jsob.put("chat_id", chat_C.getChatId());
 							jsob.put("message_id", message_C.getMessageId());
 							
-							if(data.contains("Myself")){
-								
-								msg = "Ok, "+update.getCallbackQuery().getFromUser().getUserName()+", which position would you like to vie for?";
-								jsob.put("text", msg);
-								
-								
+							Vote nominationVoteCast = nomineeEJB.findbyVoterUserId(update.getCallbackQuery().getFromUser().getUserId());
+							
+							
+							if(nominationVoteCast!=null 
+									&& nominationVoteCast.getNomineeNames()!=null 
+									&& nominationVoteCast.getPosition()!=null 
+									&& !nominationVoteCast.getPosition().trim().isEmpty()
+									&& !nominationVoteCast.getNomineeNames().trim().isEmpty() ){
 								
 								jsob.put("chat_id", chat_C.getChatId());
 								jsob.put("message_id", message_C.getMessageId());
-								jsob.put("text", msg);
+								jsob.put("text", "Sorry "+update.getCallbackQuery().getFromUser().getUserName()+", you can only vote once. You had already nominated "+nominationVoteCast.getNomineeNames()+" for the "+nominationVoteCast.getPosition()+" position.");
+					
 								
-								for(String position : positions){
+							}else{
 								
-									JSONObject keyboardButton  = new JSONObject();
-									keyboardButton.put("text", position);
-									JSONObject callBackData = new JSONObject();
-									callBackData.put("position", position);
-									keyboardButton.put("callback_data", callBackData.toString());
-									
-									inlineKeyboardButtonRow = new JSONArray();
-									inlineKeyboardButtonRow.put( keyboardButton );
-									inline_keyboard.put( inlineKeyboardButtonRow );
+								if(nominationVoteCast==null){
+									nominationVoteCast = new Vote();
+									nominationVoteCast.setVoterUserId( update.getCallbackQuery().getFromUser().getUserId() );
 									
 								}
 								
-								JSONObject reply_markup  = new JSONObject();
 								
-								reply_markup.put("inline_keyboard", inline_keyboard);
-								reply_markup.put("resize_keyboard", true);
-								reply_markup.put("one_time_keyboard", true);
-								reply_markup.put("selective", false);
-								jsob.put("reply_markup", reply_markup);
+								if(data.contains("Myself")){
+									
+									
+									msg = "Ok, "+update.getCallbackQuery().getFromUser().getUserName()+", which position would you like to vie for?";
+									jsob.put("text", msg);
+									
+									
+									
+									jsob.put("chat_id", chat_C.getChatId());
+									jsob.put("message_id", message_C.getMessageId());
+									jsob.put("text", msg);
+									
+									for(String position : positions){
+									
+										JSONObject keyboardButton  = new JSONObject();
+										keyboardButton.put("text", position);
+										JSONObject callBackData = new JSONObject();
+										callBackData.put("position", position);
+										keyboardButton.put("callback_data", callBackData.toString());
+										
+										inlineKeyboardButtonRow = new JSONArray();
+										inlineKeyboardButtonRow.put( keyboardButton );
+										inline_keyboard.put( inlineKeyboardButtonRow );
+										
+									}
+									
+									JSONObject reply_markup  = new JSONObject();
+									
+									reply_markup.put("inline_keyboard", inline_keyboard);
+									reply_markup.put("resize_keyboard", true);
+									reply_markup.put("one_time_keyboard", true);
+									reply_markup.put("selective", false);
+									jsob.put("reply_markup", reply_markup);
+									
+									String nomineeNames = sanitize( update.getCallbackQuery().getFromUser().getFirstName() )
+											.concat(" ")
+											.concat( sanitize(update.getCallbackQuery().getFromUser().getLastName() ) );
+									
+									nominationVoteCast.setNomineeNames(nomineeNames);
+									nominationVoteCast.setNomineeUsername( update.getCallbackQuery().getFromUser().getUserName() );
+									nominationVoteCast.setSelfNomination(Boolean.TRUE);
+									
+									nominationVoteCast = nomineeEJB.saveOrUpdate(nominationVoteCast);
+									
+									
 								
+								}else{
+									
+									msg = "Ok, "+update.getCallbackQuery().getFromUser().getUserName()+", who in the group would you like to nominate?";
 								
-							
-							}else{
+								}
 								
-								msg = "Ok, "+update.getCallbackQuery().getFromUser().getUserName()+", who in the group would you like to nominate?";
-							
 							}
 							
 						}else if( containsAny(data, positions) ){
 							
 							
 							String positionChosen = getChosen(data, positions);
+							
+							Vote nominationVoteCast = nomineeEJB.findbyVoterUserId(update.getCallbackQuery().getFromUser().getUserId());
+							if(nominationVoteCast!=null){
+								nominationVoteCast.setPosition(positionChosen);
+								nominationVoteCast = nomineeEJB.saveOrUpdate(nominationVoteCast);
+							}
 							
 							jsob.put("chat_id", chat_C.getChatId());
 							jsob.put("message_id", message_C.getMessageId());
@@ -517,6 +563,14 @@ public class UpdateProcessorCron {
 			logger.error(e.getMessage(), e);
 		}
 		
+	}
+
+
+
+	private String sanitize(String string) {
+		if(string==null || string.trim().isEmpty())
+			return "";
+		return string.trim();
 	}
 
 
