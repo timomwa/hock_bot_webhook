@@ -370,6 +370,7 @@ public class UpdateProcessorCron {
 						reply_markup.put("resize_keyboard", true);
 						reply_markup.put("one_time_keyboard", true);
 						reply_markup.put("selective", false);
+						jsob.put("text", "Dear member. Time has come to hand in the reighns of this excellent to group to new officials. It is with this regard, we need to hold an AGM to elect new office bearers. Would you like to nominate yourself or someone for an official position?");
 						jsob.put("reply_markup", reply_markup);
 						
 					}
