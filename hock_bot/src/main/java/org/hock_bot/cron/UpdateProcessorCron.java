@@ -314,6 +314,61 @@ public class UpdateProcessorCron {
 								reply_markup.put("one_time_keyboard", true);
 								reply_markup.put("selective", false);
 								jsob.put("reply_markup", reply_markup);
+								
+							}else{
+								jsob.put("chat_id", chat_C.getChatId());
+								jsob.put("reply_to_message_id", message.getMessageId());
+								jsob.put("method", "sendmessage");
+								jsob.put("text", "Ok. Thank you "+update.getCallbackQuery().getFromUser().getUserName()+". However, you can always take part in the nomination whenever you change your mind.");
+								
+							}
+							
+						}else if(data.contains("myselfSomeone")){
+							
+							String msg = "";
+							jsob.put("chat_id", chat_C.getChatId());
+							jsob.put("message_id", message_C.getMessageId());
+							
+							if(data.contains("Myself")){
+								
+								msg = "Ok, "+update.getCallbackQuery().getFromUser().getUserName()+", which position would you like to vie for?";
+								jsob.put("text", msg);
+								
+								String[] a = {"Chariman", "Vice Chairman", "Secretary", "Treasurer", "Events Organizer", "Design, Promotions & Branding", "ICT Department"};
+								List<String> positions = Arrays.asList(a);
+								
+								jsob.put("chat_id", chat_C.getChatId());
+								jsob.put("message_id", message_C.getMessageId());
+								jsob.put("text", "Would you like to nominate yourself or someone else?");
+								
+								for(String position : positions){
+								
+									JSONObject keyboardButton  = new JSONObject();
+									keyboardButton.put("position", position);
+									JSONObject callBackData = new JSONObject();
+									callBackData.put("position", position);
+									keyboardButton.put("callback_data", callBackData.toString());
+									
+									inlineKeyboardButtonRow = new JSONArray();
+									inlineKeyboardButtonRow.put( keyboardButton );
+									inline_keyboard.put( inlineKeyboardButtonRow );
+									
+								}
+								
+								JSONObject reply_markup  = new JSONObject();
+								
+								reply_markup.put("inline_keyboard", inline_keyboard);
+								reply_markup.put("resize_keyboard", true);
+								reply_markup.put("one_time_keyboard", true);
+								reply_markup.put("selective", false);
+								jsob.put("reply_markup", reply_markup);
+								
+								
+							
+							}else{
+								
+								msg = "Ok, "+update.getCallbackQuery().getFromUser().getUserName()+", who in the group would you like to nominate?";
+							
 							}
 							
 						}
