@@ -281,6 +281,38 @@ public class UpdateProcessorCron {
 							message_resp = message_resp.concat( "*These are just estimates. Recommended service interval is 10,000kms or 3 months. Otherwise, refer to owner's manual*\n" );
 							jsob.put("text", message_resp);
 							
+						}else if(data.contains("interested")){
+							
+							
+							if(data.contains("YES")){
+								
+								String[] a = {"Myself", "Someone Else"};
+								List<String> meOrSomeoneElse = Arrays.asList(a);
+								
+								for(String myselfSomeone : meOrSomeoneElse){
+								
+									JSONObject keyboardButton  = new JSONObject();
+									keyboardButton.put("text", myselfSomeone);
+									JSONObject callBackData = new JSONObject();
+									callBackData.put("myselfSomeone", myselfSomeone);
+									keyboardButton.put("callback_data", callBackData.toString());
+									
+									inlineKeyboardButtonRow = new JSONArray();
+									inlineKeyboardButtonRow.put( keyboardButton );
+									inline_keyboard.put( inlineKeyboardButtonRow );
+									
+									JSONObject reply_markup  = new JSONObject();
+									
+									reply_markup.put("inline_keyboard", inline_keyboard);
+									reply_markup.put("resize_keyboard", true);
+									reply_markup.put("one_time_keyboard", true);
+									reply_markup.put("selective", false);
+									jsob.put("text", "Would you like to nominate yourself or someone else?");
+									jsob.put("reply_markup", reply_markup);
+									
+								}
+							}
+							
 						}
 						
 					}else if(message!=null){
@@ -316,6 +348,32 @@ public class UpdateProcessorCron {
 						
 						if(sourceMsg!=null && sourceMsg.equalsIgnoreCase("/nomination")){
 							
+							String[] a = {"YES", "NO"};
+							List<String> yesandNo = Arrays.asList(a);
+							
+							for(String yesNo : yesandNo){
+							
+								JSONObject keyboardButton  = new JSONObject();
+								keyboardButton.put("text", yesNo);
+								JSONObject callBackData = new JSONObject();
+								callBackData.put("interested", yesNo);
+								keyboardButton.put("callback_data", callBackData.toString());
+								
+								inlineKeyboardButtonRow = new JSONArray();
+								inlineKeyboardButtonRow.put( keyboardButton );
+								inline_keyboard.put( inlineKeyboardButtonRow );
+								
+								JSONObject reply_markup  = new JSONObject();
+								
+								reply_markup.put("inline_keyboard", inline_keyboard);
+								reply_markup.put("resize_keyboard", true);
+								reply_markup.put("one_time_keyboard", true);
+								reply_markup.put("selective", false);
+								jsob.put("text", "Dear member. Time has come to hand in the reighns of this excellent to group to new officials. It is with this regard, we need to hold an AGM to elect new office bearers. Would you like to nominate yourself or someone for an official position?");
+								jsob.put("reply_markup", reply_markup);
+								
+							}
+							
 						}else if(sourceMsg!=null && sourceMsg.equalsIgnoreCase("/service")){
 							
 							for(VehicleModel model : vehicleModels){
@@ -348,35 +406,6 @@ public class UpdateProcessorCron {
 							jsob.put("reply_markup", replyKeyboardRemove);
 						}
 					}
-					
-					String[] a = {"YES", "NO"};
-					List<String> yesandNo = Arrays.asList(a);
-					
-					for(String yesNo : yesandNo){
-					
-						JSONObject keyboardButton  = new JSONObject();
-						keyboardButton.put("text", yesNo);
-						JSONObject callBackData = new JSONObject();
-						callBackData.put("interested", yesNo);
-						keyboardButton.put("callback_data", callBackData.toString());
-						
-						inlineKeyboardButtonRow = new JSONArray();
-						inlineKeyboardButtonRow.put( keyboardButton );
-						inline_keyboard.put( inlineKeyboardButtonRow );
-						
-						JSONObject reply_markup  = new JSONObject();
-						
-						reply_markup.put("inline_keyboard", inline_keyboard);
-						reply_markup.put("resize_keyboard", true);
-						reply_markup.put("one_time_keyboard", true);
-						reply_markup.put("selective", false);
-						jsob.put("text", "Dear member. Time has come to hand in the reighns of this excellent to group to new officials. It is with this regard, we need to hold an AGM to elect new office bearers. Would you like to nominate yourself or someone for an official position?");
-						jsob.put("reply_markup", reply_markup);
-						
-					}
-					
-					
-					
 					
 					
 					/*
