@@ -217,7 +217,7 @@ public class UpdateProcessorCron {
 			int start = 0;
 			int size = 500;
 			List<VehicleModel> vehicleModels = vehiceModelEJB.getByMakeName("honda",start,size); 
-			String[] positionsArray = {"Chariman", "Vice Chairman", "Secretary", "Treasurer", "Events Organizer", "Design, Promotions & Branding", "ICT Department"};
+			String[] positionsArray = {"Chariman", "Vice Chairman", "Secretary", "Treasurer", "Branding and Event Organiser", "Design, Promotions & Branding", "IT facilitator", "Legal advisor", "Corporate Social Responsibility"};
 			List<String> positions = Arrays.asList(positionsArray);
 			
 			
@@ -326,7 +326,16 @@ public class UpdateProcessorCron {
 								
 								jsob.put("chat_id", chat_C.getChatId());
 								jsob.put("message_id", message_C.getMessageId());
-								jsob.put("text", "Ok. Thank you "+update.getCallbackQuery().getFromUser().getUserName()+". However, you can always take part in the nomination whenever you change your mind.");
+								String names = sanitize( update.getCallbackQuery().getFromUser().getFirstName() )
+										.concat(" ")
+										.concat( sanitize(update.getCallbackQuery().getFromUser().getLastName() ) );
+								String username = update.getCallbackQuery().getFromUser().getUserName();
+								
+								if(username==null || username.equals("null")){
+									username = names.replaceAll("[\\s]", "");
+								}
+								jsob.put("parse_mode", "markdown");
+								jsob.put("text", "Ok. Thank you *"+username+"*. However, you can always take part in the nomination whenever you change your mind.");
 								
 							}
 							
@@ -357,11 +366,6 @@ public class UpdateProcessorCron {
 									msg = "Ok, *"+update.getCallbackQuery().getFromUser().getUserName()+"*, which position would you like to vie for?";
 									jsob.put("text", msg);
 									
-									
-									
-									
-									jsob.put("text", msg);
-									
 									for(String position : positions){
 									
 										JSONObject keyboardButton  = new JSONObject();
@@ -384,12 +388,17 @@ public class UpdateProcessorCron {
 									reply_markup.put("selective", false);
 									jsob.put("reply_markup", reply_markup);
 									
-									String nomineeNames = sanitize( update.getCallbackQuery().getFromUser().getFirstName() )
+									String names = sanitize( update.getCallbackQuery().getFromUser().getFirstName() )
 											.concat(" ")
 											.concat( sanitize(update.getCallbackQuery().getFromUser().getLastName() ) );
+									String username = update.getCallbackQuery().getFromUser().getUserName();
 									
-									nominationVoteCast.setNomineeNames(nomineeNames);
-									nominationVoteCast.setNomineeUsername( update.getCallbackQuery().getFromUser().getUserName() );
+									if(username==null || username.equals("null")){
+										username = names.replaceAll("[\\s]", "");
+									}
+									
+									nominationVoteCast.setNomineeNames(names);
+									nominationVoteCast.setNomineeUsername( username );
 									nominationVoteCast.setSelfNomination(Boolean.TRUE);
 									
 									nominationVoteCast = nomineeEJB.saveOrUpdate(nominationVoteCast);
@@ -399,11 +408,52 @@ public class UpdateProcessorCron {
 								}else{
 									
 									jsob.put("parse_mode", "markdown");
-									msg = "Ok, *"+update.getCallbackQuery().getFromUser().getUserName()+"*, who in the group would you like to nominate?";
+									
+									String names = sanitize( update.getCallbackQuery().getFromUser().getFirstName() )
+											.concat(" ")
+											.concat( sanitize(update.getCallbackQuery().getFromUser().getLastName() ) );
+									String username = update.getCallbackQuery().getFromUser().getUserName();
+									
+									if(username==null || username.equals("null")){
+										username = names.replaceAll("[\\s]", "");
+									}
+									msg = "Ok, *"+username+"*, please select the position for which you want to nominate an individual for";
+									jsob.put("parse_mode", "markdown");
+									jsob.put("text", msg);
+									
+									for(String position : positions){
+										
+										JSONObject keyboardButton  = new JSONObject();
+										keyboardButton.put("text", position);
+										JSONObject callBackData = new JSONObject();
+										callBackData.put("position_other", position);
+										keyboardButton.put("callback_data", callBackData.toString());
+										
+										inlineKeyboardButtonRow = new JSONArray();
+										inlineKeyboardButtonRow.put( keyboardButton );
+										inline_keyboard.put( inlineKeyboardButtonRow );
+										
+									}
+									
+									JSONObject reply_markup  = new JSONObject();
+									
+									reply_markup.put("inline_keyboard", inline_keyboard);
+									reply_markup.put("resize_keyboard", true);
+									reply_markup.put("one_time_keyboard", true);
+									reply_markup.put("selective", false);
+									jsob.put("reply_markup", reply_markup);
 								
 								}
 								
 							}
+							
+						}if(data.contains("position_other")){
+							
+							
+							//Get whether they last selected a position?
+							//Mark as waiting for position.
+							logger.info("\n\n\n\t data -> "+data+"\n\n");
+							
 							
 						}else if( containsAny(data, positions) ){
 							
@@ -427,7 +477,16 @@ public class UpdateProcessorCron {
 								jsob.put("chat_id", chat_C.getChatId());
 								jsob.put("message_id", message_C.getMessageId());
 								jsob.put("parse_mode", "markdown");
-								jsob.put("text", "Sorry *"+update.getCallbackQuery().getFromUser().getUserName()+"*, you can only vote once. You had already nominated *"+nominationVoteCast.getNomineeNames()+"* for the *"+nominationVoteCast.getPosition()+"* position.");
+								
+								String names = sanitize( update.getCallbackQuery().getFromUser().getFirstName() )
+										.concat(" ")
+										.concat( sanitize(update.getCallbackQuery().getFromUser().getLastName() ) );
+								String username = update.getCallbackQuery().getFromUser().getUserName();
+								
+								if(username==null || username.equals("null")){
+									username = names.replaceAll("[\\s]", "");
+								}
+								jsob.put("text", "Sorry *"+username+"*, you can only vote once. You had already nominated *"+nominationVoteCast.getNomineeNames()+"* for the *"+nominationVoteCast.getPosition()+"* position.");
 					
 								
 							}else{
@@ -435,6 +494,7 @@ public class UpdateProcessorCron {
 								if(nominationVoteCast==null){
 									nominationVoteCast = new Vote();
 								}
+								
 								String nomineeNames = sanitize( update.getCallbackQuery().getFromUser().getFirstName() )
 										.concat(" ")
 										.concat( sanitize(update.getCallbackQuery().getFromUser().getLastName() ) );
@@ -442,7 +502,14 @@ public class UpdateProcessorCron {
 								nominationVoteCast.setVoterUserId(update.getCallbackQuery().getFromUser().getUserId());
 								nominationVoteCast.setPosition(positionChosen);
 								nominationVoteCast.setNomineeNames(nomineeNames);
-								nominationVoteCast.setNomineeUsername( update.getCallbackQuery().getFromUser().getUserName() );
+								
+								String username = update.getCallbackQuery().getFromUser().getUserName();
+								
+								if(username==null || username.equals("null")){
+									username = nomineeNames.replaceAll("[\\s]", "");
+								}
+								
+								nominationVoteCast.setNomineeUsername( username );
 								nominationVoteCast = nomineeEJB.saveOrUpdate(nominationVoteCast);
 								
 								logger.info("\n\n\n\t nominationVoteCast -> "+nominationVoteCast+"\n\n");
@@ -450,7 +517,9 @@ public class UpdateProcessorCron {
 								jsob.put("chat_id", chat_C.getChatId());
 								jsob.put("message_id", message_C.getMessageId());
 								jsob.put("parse_mode", "markdown");
-								jsob.put("text", "Thank you *"+update.getCallbackQuery().getFromUser().getUserName()+"*. Your self nomination for the *"+positionChosen+"* has been received now waiting approval.");
+								
+								
+								jsob.put("text", "Thank you *"+username+"*. Your self nomination for the *"+positionChosen+"* has been received now waiting approval.");
 							
 								
 							}
