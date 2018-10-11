@@ -625,7 +625,7 @@ public class UpdateProcessorCron {
 							int position = 0;
 							for(VoteDTO votedto : votesDTO){
 								position++;
-								tally = (tally + (!tally.isEmpty()? "\n": "") ) + position + ". "+ votedto.getNominee() + " for *"+ votedto.getPosition() +"* : "+ votedto.getCount() +" (*"+calculatePercentage(totalVotesCast, votedto.getCount()) +"%*) ";
+								tally = (tally + (!tally.isEmpty()? "\n\n\n": "") ) + "*"+position + ".* "+ votedto.getNominee() + "\nfor *"+ votedto.getPosition() +"* : "+ votedto.getCount() +" (*"+calculatePercentage(totalVotesCast, votedto.getCount()) +"%*) ";
 							}
 							tally = tally +"\nTotal Votes Cast - "+totalVotesCast.toPlainString()+"\n\nTo cast your vote, reply with\n/start";
 							jsob.put("text", tally);
