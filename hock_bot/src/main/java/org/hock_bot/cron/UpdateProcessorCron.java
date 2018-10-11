@@ -655,9 +655,9 @@ public class UpdateProcessorCron {
 							reply_markup.put("selective", false);
 							
 							String username = message.getFromUser().getUserName();
-							String names = sanitize( update.getCallbackQuery().getFromUser().getFirstName() )
+							String names = sanitize( update.getMessage().getFromUser().getFirstName() )
 									.concat(" ")
-									.concat( sanitize(update.getCallbackQuery().getFromUser().getLastName() ) );
+									.concat( sanitize(update.getMessage().getFromUser().getLastName() ) );
 							if(username==null || username.equals("null")){
 								username = names.replaceAll("[\\s]", "");
 							}
