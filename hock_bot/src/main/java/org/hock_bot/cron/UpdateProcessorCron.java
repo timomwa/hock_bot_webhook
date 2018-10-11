@@ -480,7 +480,7 @@ public class UpdateProcessorCron {
 								if(username==null || username.equals("null")){
 									username = names.replaceAll("[\\s]", "");
 								}
-								String msg = URLEncoder.encode("Alright *"+username+"*, please enter the full names of the individual you would like to nominate for the *"+positionChosen+"* position.\n\nPlease note that you can only vote once per position.","UTF-8");
+								String msg = "Alright *"+username+"*, please enter the full names of the individual you would like to nominate for the *"+positionChosen+"* position.\n\nPlease note that you can only vote once per position.";
 								jsob.put("chat_id", chat_C.getChatId());
 								jsob.put("message_id", message_C.getMessageId());
 								jsob.put("parse_mode", "markdown");
@@ -501,7 +501,7 @@ public class UpdateProcessorCron {
 								if(username==null || username.equals("null")){
 									username = names.replaceAll("[\\s]", "");
 								}
-								jsob.put("text", URLEncoder.encode("Sorry *"+username+"*, you can only vote once per position. \n\nYou had already nominated *"+nominationVoteCast.getNomineeNames()+"* for the *"+nominationVoteCast.getPosition()+"* position. \n\nFeel free to nominate yourself or other members for different positions. Reply with /start","UTF-8") );
+								jsob.put("text", "Sorry *"+username+"*, you can only vote once per position. \n\nYou had already nominated *"+nominationVoteCast.getNomineeNames()+"* for the *"+nominationVoteCast.getPosition()+"* position. \n\nFeel free to nominate yourself or other members for different positions. Reply with /start" );
 					
 							}
 							
@@ -537,7 +537,7 @@ public class UpdateProcessorCron {
 								if(username==null || username.equals("null")){
 									username = names.replaceAll("[\\s]", "");
 								}
-								jsob.put("text", URLEncoder.encode("Sorry *"+username+"*, you can only vote once per position. \nYou had already nominated *"+nominationVoteCast.getNomineeNames()+"* for the *"+nominationVoteCast.getPosition()+"* position. \n\nFeel free to nominate yourself or other members for other positions.","UTF-8") );
+								jsob.put("text", "Sorry *"+username+"*, you can only vote once per position. \nYou had already nominated *"+nominationVoteCast.getNomineeNames()+"* for the *"+nominationVoteCast.getPosition()+"* position. \n\nFeel free to nominate yourself or other members for other positions.");
 					
 								
 							}else{
@@ -634,7 +634,7 @@ public class UpdateProcessorCron {
 							reply_markup.put("resize_keyboard", true);
 							reply_markup.put("one_time_keyboard", true);
 							reply_markup.put("selective", false);
-							jsob.put("text", "Dear member. Time has come to hand in the reighns of this excellent group to new officials. It is with this regard, we need to hold an AGM to elect new office bearers. Would you like to nominate yourself or someone for an official position?");
+							jsob.put("text", "Dear member. \nTime has come to hand in the reighns of this excellent group to new officials. \nIt is with this regard, we need to hold an AGM to elect new office bearers. \n\nWould you like to nominate yourself or someone for an official position?");
 							jsob.put("reply_markup", reply_markup);
 							
 						}else if(sourceMsg!=null && sourceMsg.equalsIgnoreCase("/service")){
@@ -699,7 +699,7 @@ public class UpdateProcessorCron {
 									if(username==null || username.equals("null")){
 										username = names.replaceAll("[\\s]", "");
 									}
-									jsob.put("text", URLEncoder.encode("Sorry *"+username+"*, you can only vote once per position. \nYou had already nominated *"+nominationVoteCast.getNomineeNames()+"* for the *"+nominationVoteCast.getPosition()+"* position. \n\nFeel free to nominate yourself or other members for other positions.","UTF-8") );
+									jsob.put("text", "Sorry *"+username+"*, you can only vote once per position. \nYou had already nominated *"+nominationVoteCast.getNomineeNames()+"* for the *"+nominationVoteCast.getPosition()+"* position. \n\nFeel free to nominate yourself or other members for other positions." );
 						
 									
 								}else{
@@ -729,7 +729,7 @@ public class UpdateProcessorCron {
 									nominationVoteCast = nomineeEJB.saveOrUpdate(nominationVoteCast);
 									
 									jsob.put("parse_mode", "markdown");
-									respText = "You have nominated *"+sourceMsg+"* for the *"+position.getPositionMarker()+"* position. Thank you! To see the results as they come in, reply with /results.";
+									respText = "You have nominated *"+sourceMsg+"* for the *"+position.getPositionMarker()+"* position.\nThank you!\n\nTo see the results as they come in, reply with /results.";
 								}
 								
 								flowPositionEJB.deleteById(position.getId());
