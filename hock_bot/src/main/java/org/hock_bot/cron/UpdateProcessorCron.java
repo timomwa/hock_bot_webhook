@@ -349,12 +349,12 @@ public class UpdateProcessorCron {
 								
 								jsob.put("chat_id", chat_C.getChatId());
 								jsob.put("message_id", message_C.getMessageId());
-								jsob.put("parse_mode", "html");
+								jsob.put("parse_mode", "markdown");
 								
 								if(data.contains("Myself")){
 									
 									
-									msg = "Ok, <b>"+update.getCallbackQuery().getFromUser().getUserName()+"</b>, which position would you like to vie for?";
+									msg = "Ok, *"+update.getCallbackQuery().getFromUser().getUserName()+"*, which position would you like to vie for?";
 									jsob.put("text", msg);
 									
 									
@@ -398,8 +398,8 @@ public class UpdateProcessorCron {
 								
 								}else{
 									
-									jsob.put("parse_mode", "html");
-									msg = "Ok, <b>"+update.getCallbackQuery().getFromUser().getUserName()+"</b>, who in the group would you like to nominate?";
+									jsob.put("parse_mode", "markdown");
+									msg = "Ok, *"+update.getCallbackQuery().getFromUser().getUserName()+"*, who in the group would you like to nominate?";
 								
 								}
 								
@@ -438,8 +438,8 @@ public class UpdateProcessorCron {
 								
 								jsob.put("chat_id", chat_C.getChatId());
 								jsob.put("message_id", message_C.getMessageId());
-								jsob.put("parse_mode", "html");
-								jsob.put("text", "Thank you <b>"+update.getCallbackQuery().getFromUser().getUserName()+"</b>. Your self nomination for the <b><i>"+positionChosen+"</i></b> has been received now waiting approval.");
+								jsob.put("parse_mode", "markdown");
+								jsob.put("text", "Thank you *"+update.getCallbackQuery().getFromUser().getUserName()+"*. Your self nomination for the *"+positionChosen+"* has been received now waiting approval.");
 							
 								
 							}
