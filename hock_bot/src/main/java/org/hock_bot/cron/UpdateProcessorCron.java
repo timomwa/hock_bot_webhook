@@ -456,31 +456,54 @@ public class UpdateProcessorCron {
 						}if(data.contains("position_other")){
 							
 							
+							
 							//Get whether they last selected a position?
 							//Mark as waiting for position.
 							logger.info("\n\n\n\t data -> "+data+"\n\n");
 							String positionChosen = getChosen(data, positions);
 							Integer voterUserId = update.getCallbackQuery().getFromUser().getUserId();
 							
-							flowPositionEJB.deletePreviousMarkers(update.getMessage().getChat().getChatId(),  voterUserId);
+							Vote nominationVoteCast = nomineeEJB.findbyVoterUserIdAndPosition(voterUserId, positionChosen);
 							
-							FlowPosition position = flowPositionEJB.createMarker(update.getMessage().getChat().getChatId(),  voterUserId, positionChosen);
-							logger.info("\n\n\n\t position -> "+position+"\n\n");
 							
-							String names = sanitize( update.getCallbackQuery().getFromUser().getFirstName() )
-									.concat(" ")
-									.concat( sanitize(update.getCallbackQuery().getFromUser().getLastName() ) );
-							String username = update.getCallbackQuery().getFromUser().getUserName();
-							
-							if(username==null || username.equals("null")){
-								username = names.replaceAll("[\\s]", "");
+							if(nominationVoteCast==null){
+								flowPositionEJB.deletePreviousMarkers(update.getMessage().getChat().getChatId(),  voterUserId);
+								
+								FlowPosition position = flowPositionEJB.createMarker(update.getMessage().getChat().getChatId(),  voterUserId, positionChosen);
+								logger.info("\n\n\n\t position -> "+position+"\n\n");
+								
+								String names = sanitize( update.getCallbackQuery().getFromUser().getFirstName() )
+										.concat(" ")
+										.concat( sanitize(update.getCallbackQuery().getFromUser().getLastName() ) );
+								String username = update.getCallbackQuery().getFromUser().getUserName();
+								
+								if(username==null || username.equals("null")){
+									username = names.replaceAll("[\\s]", "");
+								}
+								String msg = URLEncoder.encode("Alright *"+username+"*, please enter the full names of the individual you would like to nominate for the *"+positionChosen+"* position.\n\nPlease note that you can only vote once per position.","UTF-8");
+								jsob.put("chat_id", chat_C.getChatId());
+								jsob.put("message_id", message_C.getMessageId());
+								jsob.put("parse_mode", "markdown");
+								jsob.put("remove_keyboard", true);
+								jsob.put("text", msg);
+								
+							}else{
+								
+								jsob.put("chat_id", chat_C.getChatId());
+								jsob.put("message_id", message_C.getMessageId());
+								jsob.put("parse_mode", "markdown");
+								
+								String names = sanitize( update.getCallbackQuery().getFromUser().getFirstName() )
+										.concat(" ")
+										.concat( sanitize(update.getCallbackQuery().getFromUser().getLastName() ) );
+								String username = update.getCallbackQuery().getFromUser().getUserName();
+								
+								if(username==null || username.equals("null")){
+									username = names.replaceAll("[\\s]", "");
+								}
+								jsob.put("text", URLEncoder.encode("Sorry *"+username+"*, you can only vote once per position. \n\nYou had already nominated *"+nominationVoteCast.getNomineeNames()+"* for the *"+nominationVoteCast.getPosition()+"* position. \n\nFeel free to nominate yourself or other members for different positions. Reply with /start","UTF-8") );
+					
 							}
-							String msg = "Alright *"+username+"*, please enter the full names of the individual you would like to nominate for the *"+positionChosen+"* position.";
-							jsob.put("chat_id", chat_C.getChatId());
-							jsob.put("message_id", message_C.getMessageId());
-							jsob.put("parse_mode", "markdown");
-							jsob.put("remove_keyboard", true);
-							jsob.put("text", msg);
 							
 							
 						}else if( containsAny(data, positions) ){
@@ -668,10 +691,10 @@ public class UpdateProcessorCron {
 									jsob.put("message_id", update.getMessage().getMessageId());
 									jsob.put("parse_mode", "markdown");
 									
-									String names = sanitize( update.getCallbackQuery().getFromUser().getFirstName() )
+									String names = sanitize( update.getMessage().getFromUser().getFirstName() )
 											.concat(" ")
-											.concat( sanitize(update.getCallbackQuery().getFromUser().getLastName() ) );
-									String username = update.getCallbackQuery().getFromUser().getUserName();
+											.concat( sanitize(update.getMessage().getFromUser().getLastName() ) );
+									String username = update.getMessage().getFromUser().getUserName();
 									
 									if(username==null || username.equals("null")){
 										username = names.replaceAll("[\\s]", "");
