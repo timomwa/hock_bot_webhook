@@ -440,6 +440,8 @@ public class UpdateProcessorCron {
 								nominationVoteCast.setNomineeUsername( update.getCallbackQuery().getFromUser().getUserName() );
 								nominationVoteCast = nomineeEJB.saveOrUpdate(nominationVoteCast);
 								
+								logger.info("\n\n\n\t nominationVoteCast -> "+nominationVoteCast+"\n\n");
+								
 								jsob.put("chat_id", chat_C.getChatId());
 								jsob.put("message_id", message_C.getMessageId());
 								jsob.put("parse_mode", "markdown");
