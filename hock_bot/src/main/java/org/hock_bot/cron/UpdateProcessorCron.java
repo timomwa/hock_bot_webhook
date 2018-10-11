@@ -224,7 +224,7 @@ public class UpdateProcessorCron {
 			int start = 0;
 			int size = 500;
 			List<VehicleModel> vehicleModels = vehiceModelEJB.getByMakeName("honda",start,size); 
-			String[] positionsArray = {"Chariman", "Vice Chairman", "Secretary", "Treasurer", "Branding and Event Organiser", "Design, Promotions & Branding", "IT facilitator", "Legal advisor", "Corporate Social Responsibility"};
+			String[] positionsArray = {"Chariman", "Vice Chairman", "Secretary", "Treasurer", "CSR Coordinator", "IT Manager", "Legal Advisor", "Diaspora Representatives", "Events/Branding Coordinator"};
 			List<String> positions = Arrays.asList(positionsArray);
 			
 			
@@ -597,31 +597,60 @@ public class UpdateProcessorCron {
 								
 								nominationVoteCast.setNomineeUsername( username );
 								nominationVoteCast.setSelfNomination(Boolean.TRUE);
-								nominationVoteCast = nomineeEJB.saveOrUpdate(nominationVoteCast);
-								
-								logger.info("\n\n\n\t nominationVoteCast -> "+nominationVoteCast+"\n\n");
-								
-								jsob.put("chat_id", chat_C.getChatId());
-								jsob.put("message_id", message_C.getMessageId());
-								jsob.put("parse_mode", "markdown");
 								
 								
-								List<VoteDTO> votesDTO = nomineeEJB.doTally();
-								String tally = "";
-								BigDecimal totalVotesCast = BigDecimal.ZERO;
-								for(VoteDTO votedto : votesDTO){
-									totalVotesCast = totalVotesCast.add( BigDecimal.valueOf( votedto.getCount()) );
+								Vote existingNomination = nomineeEJB.findByNomineeUserNameAndNamesAndUserId(username, nomineeNames, update.getCallbackQuery().getFromUser().getUserId(), Boolean.TRUE);
+								
+								if(existingNomination==null){
+									
+									nominationVoteCast = nomineeEJB.saveOrUpdate(nominationVoteCast);
+									
+									logger.info("\n\n\n\t nominationVoteCast -> "+nominationVoteCast+"\n\n");
+									
+									jsob.put("chat_id", chat_C.getChatId());
+									jsob.put("message_id", message_C.getMessageId());
+									jsob.put("parse_mode", "markdown");
+									
+									
+									List<VoteDTO> votesDTO = nomineeEJB.doTally();
+									String tally = "";
+									BigDecimal totalVotesCast = BigDecimal.ZERO;
+									for(VoteDTO votedto : votesDTO){
+										totalVotesCast = totalVotesCast.add( BigDecimal.valueOf( votedto.getCount()) );
+									}
+									
+									int position = 0;
+									for(VoteDTO votedto : votesDTO){
+										position++;
+										tally = (tally + (!tally.isEmpty()? "\n\n\n": "") ) + "*"+position + ".* "+ votedto.getNominee() + "\nfor *"+ votedto.getPosition() +"* : "+ votedto.getCount() +" (*"+calculatePercentage(totalVotesCast, votedto.getCount()) +"%*) ";
+									}
+									tally = tally +"\n\n\nTotal Votes Cast - "+totalVotesCast.toPlainString()+"\n\nTo cast your vote, reply with\n/start";
+									
+									jsob.put("text", "Thank you *"+username+"*. \nYour self nomination for the *"+positionChosen+"* has been received.\n\nNote: Your nomination is subject to incumbent officials' evaluation.\n\n\nResults so far\n\n"+tally);
+								
+								}else{
+									
+									jsob.put("chat_id", chat_C.getChatId());
+									jsob.put("message_id", message_C.getMessageId());
+									jsob.put("parse_mode", "markdown");
+									
+									List<VoteDTO> votesDTO = nomineeEJB.doTally();
+									String tally = "";
+									BigDecimal totalVotesCast = BigDecimal.ZERO;
+									for(VoteDTO votedto : votesDTO){
+										totalVotesCast = totalVotesCast.add( BigDecimal.valueOf( votedto.getCount()) );
+									}
+									
+									int position = 0;
+									for(VoteDTO votedto : votesDTO){
+										position++;
+										tally = (tally + (!tally.isEmpty()? "\n\n\n": "") ) + "*"+position + ".* "+ votedto.getNominee() + "\nfor *"+ votedto.getPosition() +"* : "+ votedto.getCount() +" (*"+calculatePercentage(totalVotesCast, votedto.getCount()) +"%*) ";
+									}
+									tally = tally +"\n\n\nTotal Votes Cast - "+totalVotesCast.toPlainString()+"\n\nTo cast your vote, reply with\n/start";
+									
+									jsob.put("text", "Sorry *"+username+"*. \nYou have already nominated yourself for the *"+positionChosen+"* position. \n\nYou cannot nominate yourself for more than one position.\n\n"+tally);
+									
 								}
-								
-								int position = 0;
-								for(VoteDTO votedto : votesDTO){
-									position++;
-									tally = (tally + (!tally.isEmpty()? "\n\n\n": "") ) + "*"+position + ".* "+ votedto.getNominee() + "\nfor *"+ votedto.getPosition() +"* : "+ votedto.getCount() +" (*"+calculatePercentage(totalVotesCast, votedto.getCount()) +"%*) ";
-								}
-								tally = tally +"\n\n\nTotal Votes Cast - "+totalVotesCast.toPlainString()+"\n\nTo cast your vote, reply with\n/start";
-								
-								jsob.put("text", "Thank you *"+username+"*. \nYour self nomination for the *"+positionChosen+"* has been received.\n\nNote: Your nomination is subject to incumbent officials' evaluation.\n\n\nResults so far\n\n"+tally);
-							
 								
 							}
 							

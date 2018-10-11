@@ -59,4 +59,38 @@ public class VoteDAOImpl  extends GenericDAOImpl<Vote, Long> implements VoteDAOI
 		return tally;
 	}
 
+	@Override
+	public Vote findByNomineeUserNameAndNamesAndUserId(String nomineeUsername, String nomineeNames, Integer voterUserId, Boolean selfNomination) {
+		Vote nominationVote = null;
+		
+		try{
+			
+			Query qry = em.createQuery("from Vote v WHERE "
+					+ "	v.nomineeUsername = :nomineeUsername "
+					+ "		AND "
+					+ " v.nomineeNames = :nomineeNames "
+					+ "		AND "
+					+ " v.voterUserId = :voterUserId "
+					+ "		AND "
+					+ " v.selfNomination = :selfNomination "
+					+ "		AND "
+					+ " v.voterUserId = :voterUserId ");
+			
+			qry.setParameter("nomineeUsername", nomineeUsername);
+			qry.setParameter("nomineeNames", nomineeNames);
+			qry.setParameter("voterUserId", voterUserId);
+			qry.setParameter("selfNomination", selfNomination);
+			qry.setParameter("voterUserId", voterUserId);
+			nominationVote = (Vote) qry.getSingleResult();
+			
+		}catch(NoResultException nre){
+			
+		}catch(Exception e){
+			logger.error(e.getMessage(),e);
+		}
+		
+		return nominationVote;
+	}
+	}
+
 }

@@ -15,4 +15,6 @@ public interface VoteEJBI {
 
 	List<VoteDTO> doTally();
 
+	Vote findByNomineeUserNameAndNamesAndUserId(String username, String nomineeNames, Integer userId, Boolean selfNomination);
+
 }
