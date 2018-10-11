@@ -24,6 +24,7 @@ import org.apache.http.entity.ContentType;
 import org.apache.log4j.Logger;
 import org.hock_bot.ejb.CallbackQueryEJBI;
 import org.hock_bot.ejb.ConfigurationEJBI;
+import org.hock_bot.ejb.FlowPositionEJBI;
 import org.hock_bot.ejb.MenuMapEJBI;
 import org.hock_bot.ejb.VoteEJBI;
 import org.hock_bot.ejb.UpdateEJBI;
@@ -31,6 +32,7 @@ import org.hock_bot.ejb.VehicleMakeEJBI;
 import org.hock_bot.ejb.VehicleModelEJBI;
 import org.hock_bot.model.CallbackQuery;
 import org.hock_bot.model.Chat;
+import org.hock_bot.model.FlowPosition;
 import org.hock_bot.model.MenuMap;
 import org.hock_bot.model.Message;
 import org.hock_bot.model.Vote;
@@ -67,6 +69,9 @@ public class UpdateProcessorCron {
 	
 	@EJB
 	private CallbackQueryEJBI callBackQueryEJB;
+	
+	@EJB
+	private FlowPositionEJBI flowPositionEJB;
 	
 	private Logger logger = Logger.getLogger(getClass());
 	
@@ -457,8 +462,8 @@ public class UpdateProcessorCron {
 							String positionChosen = getChosen(data, positions);
 							Integer voterUserId = update.getCallbackQuery().getFromUser().getUserId();
 							
-							
-							
+							FlowPosition position = flowPositionEJB.createMarker(update.getMessage().getChat().getChatId(),  voterUserId, positionChosen);
+							logger.info("\n\n\n\t position -> "+position+"\n\n");
 							
 							String names = sanitize( update.getCallbackQuery().getFromUser().getFirstName() )
 									.concat(" ")
@@ -531,7 +536,7 @@ public class UpdateProcessorCron {
 								}
 								
 								nominationVoteCast.setNomineeUsername( username );
-								nominationVoteCast = nomineeEJB.saveOrUpdate(nominationVoteCast);
+								//** se if this has any use?? nominationVoteCast = nomineeEJB.saveOrUpdate(nominationVoteCast);
 								
 								logger.info("\n\n\n\t nominationVoteCast -> "+nominationVoteCast+"\n\n");
 								
@@ -646,9 +651,38 @@ public class UpdateProcessorCron {
 								lastSentText = sanitize( lastMessage.getText() );
 							}
 							logger.info("\n\n\n\t lastSentText -> "+lastSentText+"\n\n");
-							if(lastSentText.contains("please select the position for which you want to nominate an individual for.")){
+							FlowPosition position = flowPositionEJB.findFlowPosition(update.getMessage().getChat().getChatId(), update.getMessage().getFromUser().getUserId());
+							logger.info("\n\n\n\t position -> "+position+"\n\n");
+							
+							
+							if( equalsAny(position.getPositionMarker(), positions) ){
+								
+								Vote nominationVoteCast = new Vote();
+								
+								String nomineeNames = sanitize( update.getCallbackQuery().getFromUser().getFirstName() )
+										.concat(" ")
+										.concat( sanitize(update.getCallbackQuery().getFromUser().getLastName() ) );
+								
+								nominationVoteCast.setVoterUserId(update.getCallbackQuery().getFromUser().getUserId());
+								nominationVoteCast.setPosition(position.getPositionMarker());
+								nominationVoteCast.setNomineeNames(sourceMsg);
+								
+								String username = update.getCallbackQuery().getFromUser().getUserName();
+								
+								if(username==null || username.equals("null")){
+									username = nomineeNames.replaceAll("[\\s]", "");
+								}
+								
+								nominationVoteCast.setNomineeUsername( sourceMsg );
+								nominationVoteCast.setSelfNomination(Boolean.FALSE);
+								
+								nominationVoteCast = nomineeEJB.saveOrUpdate(nominationVoteCast);
+								
 								jsob.put("parse_mode", "markdown");
-								respText = "You have nominated *"+sourceMsg+"* for this position. Thank you! To see the results as they come in, reply with /results.";
+								respText = "You have nominated *"+sourceMsg+"* for the *"+position.getPositionMarker()+"* position. Thank you! To see the results as they come in, reply with /results.";
+							
+							}else{
+								respText = "Reply with /start to start nominating members for official positions.";
 							}
 						}
 					}
@@ -719,6 +753,16 @@ public class UpdateProcessorCron {
 
 
 	private boolean containsAny(String data, List<String> positions) {
+		
+		for(String position : positions){
+			if(data.contains(position)){
+				return true;
+			}
+		}
+		return false;
+	}
+	
+	private boolean equalsAny(String data, List<String> positions) {
 		
 		for(String position : positions){
 			if(data.contains(position)){

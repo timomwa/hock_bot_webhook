@@ -1,10 +1,13 @@
 package org.hock_bot.model;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Table;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.hock_bot.core.ConfigurationI;
+
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 
 @XmlRootElement(name="raw_requests")
