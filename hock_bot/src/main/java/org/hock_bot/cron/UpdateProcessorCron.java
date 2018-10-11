@@ -648,7 +648,7 @@ public class UpdateProcessorCron {
 									}
 									tally = tally +"\n\n\nTotal Votes Cast - "+totalVotesCast.toPlainString()+"\n\nTo cast your vote, reply with\n/start";
 									
-									jsob.put("text", "Sorry *"+username+"*. \nYou have already nominated yourself for the *"+positionChosen+"* position. \n\nYou cannot nominate yourself for more than one position.\n\n"+tally);
+									jsob.put("text", "Sorry *"+username+"*. \nYou have already nominated yourself for the *"+existingNomination.getPosition()+"* position. \n\nYou cannot nominate yourself for more than one position.\n\n"+tally);
 									
 								}
 								
