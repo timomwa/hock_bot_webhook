@@ -426,7 +426,8 @@ public class UpdateProcessorCron {
 								
 								jsob.put("chat_id", chat_C.getChatId());
 								jsob.put("message_id", message_C.getMessageId());
-								jsob.put("text", "Sorry "+update.getCallbackQuery().getFromUser().getUserName()+", you can only vote once. You had already nominated "+nominationVoteCast.getNomineeNames()+" for the "+nominationVoteCast.getPosition()+" position.");
+								jsob.put("parse_mode", "markdown");
+								jsob.put("text", "Sorry *"+update.getCallbackQuery().getFromUser().getUserName()+"*, you can only vote once. You had already nominated *"+nominationVoteCast.getNomineeNames()+"* for the *"+nominationVoteCast.getPosition()+"* position.");
 					
 								
 							}else{
