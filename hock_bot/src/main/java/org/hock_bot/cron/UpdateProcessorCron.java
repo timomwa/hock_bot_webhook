@@ -342,7 +342,40 @@ public class UpdateProcessorCron {
 									username = names.replaceAll("[\\s]", "");
 								}
 								jsob.put("parse_mode", "markdown");
-								jsob.put("text", "Ok. Thank you *"+username+"*. However, you can always take part in the nomination whenever you change your mind.\n\nReply with /start to vote.\n\nReply with /results to see nomination results so far.");
+								List<VoteDTO> votesDTO = nomineeEJB.doTally();
+								String tally = "";
+								BigDecimal totalVotesCast = BigDecimal.ZERO;
+								for(VoteDTO votedto : votesDTO){
+									totalVotesCast = totalVotesCast.add( BigDecimal.valueOf( votedto.getCount()) );
+								}
+								
+								int position = 0;
+								for(VoteDTO votedto : votesDTO){
+									position++;
+									tally = (tally + (!tally.isEmpty()? "\n\n\n": "") ) + "*"+position + ".* "+ votedto.getNominee() + "\nfor *"+ votedto.getPosition() +"* : "+ votedto.getCount() +" (*"+calculatePercentage(totalVotesCast, votedto.getCount()) +"%*) ";
+								}
+								tally = tally +"\nTotal Votes Cast - "+totalVotesCast.toPlainString()+"\n\nTo cast your vote, reply with\n/start";
+								
+								jsob.put("text", "Ok. Thank you *"+username+"*. However, you can always take part in the nomination whenever you change your mind.\n\nReply with /start to vote.\n\nResults So far;\n\n\n"+tally);
+								
+							}else if(data.contains("SEE RESULTS SO FAR")){
+								
+								jsob.put("parse_mode", "markdown");
+								List<VoteDTO> votesDTO = nomineeEJB.doTally();
+								String tally = "";
+								BigDecimal totalVotesCast = BigDecimal.ZERO;
+								for(VoteDTO votedto : votesDTO){
+									totalVotesCast = totalVotesCast.add( BigDecimal.valueOf( votedto.getCount()) );
+								}
+								
+								int position = 0;
+								for(VoteDTO votedto : votesDTO){
+									position++;
+									tally = (tally + (!tally.isEmpty()? "\n\n\n": "") ) + "*"+position + ".* "+ votedto.getNominee() + "\nfor *"+ votedto.getPosition() +"* : "+ votedto.getCount() +" (*"+calculatePercentage(totalVotesCast, votedto.getCount()) +"%*) ";
+								}
+								tally = tally +"\nTotal Votes Cast - "+totalVotesCast.toPlainString()+"\n\nTo cast your vote, reply with\n/start";
+								jsob.put("text", tally);
+								jsob.put("parse_mode", "markdown");
 								
 							}
 							
@@ -538,7 +571,7 @@ public class UpdateProcessorCron {
 								if(username==null || username.equals("null")){
 									username = names.replaceAll("[\\s]", "");
 								}
-								jsob.put("text", "Sorry *"+username+"*, you can only vote once per position. \n\nYou had already nominated *"+nominationVoteCast.getNomineeNames()+"* for the *"+nominationVoteCast.getPosition()+"* position. \n\nFeel free to nominate yourself or other members for other positions.");
+								jsob.put("text", "Sorry *"+username+"*, you can only vote once per position. \n\nYou had already nominated *"+nominationVoteCast.getNomineeNames()+"* for the *"+nominationVoteCast.getPosition()+"* position. \n\nFeel free to nominate yourself or other members for other positions.\n\nTo see the results so far, reply with /results\n\nTo vote for a different position reply with /start");
 					
 								
 							}else{
@@ -572,7 +605,21 @@ public class UpdateProcessorCron {
 								jsob.put("parse_mode", "markdown");
 								
 								
-								jsob.put("text", "Thank you *"+username+"*. Your self nomination for the *"+positionChosen+"* has been received now waiting approval.");
+								List<VoteDTO> votesDTO = nomineeEJB.doTally();
+								String tally = "";
+								BigDecimal totalVotesCast = BigDecimal.ZERO;
+								for(VoteDTO votedto : votesDTO){
+									totalVotesCast = totalVotesCast.add( BigDecimal.valueOf( votedto.getCount()) );
+								}
+								
+								int position = 0;
+								for(VoteDTO votedto : votesDTO){
+									position++;
+									tally = (tally + (!tally.isEmpty()? "\n\n\n": "") ) + "*"+position + ".* "+ votedto.getNominee() + "\nfor *"+ votedto.getPosition() +"* : "+ votedto.getCount() +" (*"+calculatePercentage(totalVotesCast, votedto.getCount()) +"%*) ";
+								}
+								tally = tally +"\nTotal Votes Cast - "+totalVotesCast.toPlainString()+"\n\nTo cast your vote, reply with\n/start";
+								
+								jsob.put("text", "Thank you *"+username+"*. \nYour self nomination for the *"+positionChosen+"* has been received.\n\nNote: Your nomination is subject to incumbent officials' evaluation.\n\n\nResults so far\n\n"+tally);
 							
 								
 							}
@@ -633,7 +680,7 @@ public class UpdateProcessorCron {
 							
 						}else if(sourceMsg!=null && ( sourceMsg.equalsIgnoreCase("/nomination") || sourceMsg.equalsIgnoreCase("/start") )){
 							
-							String[] a = {"YES", "NO"};
+							String[] a = {"YES", "NO", "SEE RESULTS SO FAR"};
 							List<String> yesandNo = Arrays.asList(a);
 							
 							for(String yesNo : yesandNo){
