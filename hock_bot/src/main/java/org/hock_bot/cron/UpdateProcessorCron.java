@@ -342,7 +342,7 @@ public class UpdateProcessorCron {
 									username = names.replaceAll("[\\s]", "");
 								}
 								jsob.put("parse_mode", "markdown");
-								jsob.put("text", "Ok. Thank you *"+username+"*. However, you can always take part in the nomination whenever you change your mind.");
+								jsob.put("text", "Ok. Thank you *"+username+"*. However, you can always take part in the nomination whenever you change your mind.\n\nReply with /start to vote.\n\nReply with /results to see nomination results so far.");
 								
 							}
 							
@@ -502,7 +502,7 @@ public class UpdateProcessorCron {
 								if(username==null || username.equals("null")){
 									username = names.replaceAll("[\\s]", "");
 								}
-								jsob.put("text", "Sorry *"+username+"*, you can only vote once per position. \n\nYou had already nominated *"+nominationVoteCast.getNomineeNames()+"* for the *"+nominationVoteCast.getPosition()+"* position. \n\nFeel free to nominate yourself or other members for different positions. Reply with /start" );
+								jsob.put("text", "Sorry *"+username+"*, you can only vote once per position. \n\nYou had already nominated *"+nominationVoteCast.getNomineeNames()+"* for the *"+nominationVoteCast.getPosition()+"* position. \n\nFeel free to nominate yourself or other members for different positions.\n\nReply with /start to vote.\n\nReply with /results to see nomination results so far." );
 					
 							}
 							
@@ -608,6 +608,7 @@ public class UpdateProcessorCron {
 						jsob.put("text", respText);
 						jsob.put("reply_to_message_id", message.getMessageId());
 						jsob.put("method", "sendmessage");
+						jsob.put("parse_mode", "markdown");
 						
 						logger.info(" sourceMsg ::: "+sourceMsg);
 						
