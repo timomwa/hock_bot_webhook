@@ -458,6 +458,8 @@ public class UpdateProcessorCron {
 							Integer voterUserId = update.getCallbackQuery().getFromUser().getUserId();
 							
 							
+							
+							
 							String names = sanitize( update.getCallbackQuery().getFromUser().getFirstName() )
 									.concat(" ")
 									.concat( sanitize(update.getCallbackQuery().getFromUser().getLastName() ) );
@@ -635,6 +637,19 @@ public class UpdateProcessorCron {
 							replyKeyboardRemove.put("remove_keyboard", true);
 							replyKeyboardRemove.put("selective", false);
 							jsob.put("reply_markup", replyKeyboardRemove);
+						}else{
+							
+							Message lastMessage = update.getMessage();
+							logger.info("\n\n\n\t data -> "+lastMessage+"\n\n");
+							String lastSentText = "";
+							if(lastMessage!=null){
+								lastSentText = sanitize( lastMessage.getText() );
+							}
+							logger.info("\n\n\n\t lastSentText -> "+lastSentText+"\n\n");
+							if(lastSentText.contains("please select the position for which you want to nominate an individual for.")){
+								jsob.put("parse_mode", "markdown");
+								respText = "You have nominated *"+sourceMsg+"* for this position. Thank you! To see the results as they come in, reply with /results.";
+							}
 						}
 					}
 					
