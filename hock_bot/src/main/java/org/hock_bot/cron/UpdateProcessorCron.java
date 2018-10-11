@@ -434,6 +434,7 @@ public class UpdateProcessorCron {
 										.concat(" ")
 										.concat( sanitize(update.getCallbackQuery().getFromUser().getLastName() ) );
 								
+								nominationVoteCast.setPosition(positionChosen);
 								nominationVoteCast.setNomineeNames(nomineeNames);
 								nominationVoteCast.setNomineeUsername( update.getCallbackQuery().getFromUser().getUserName() );
 								nominationVoteCast = nomineeEJB.saveOrUpdate(nominationVoteCast);
