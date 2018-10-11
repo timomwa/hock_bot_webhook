@@ -562,6 +562,7 @@ public class UpdateProcessorCron {
 								}
 								
 								nominationVoteCast.setNomineeUsername( username );
+								nominationVoteCast.setSelfNomination(Boolean.TRUE);
 								nominationVoteCast = nomineeEJB.saveOrUpdate(nominationVoteCast);
 								
 								logger.info("\n\n\n\t nominationVoteCast -> "+nominationVoteCast+"\n\n");

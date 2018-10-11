@@ -43,7 +43,7 @@ public class VoteDAOImpl  extends GenericDAOImpl<Vote, Long> implements VoteDAOI
 		
 		try{
 			
-			Query qry = em.createQuery("SELECT  v.nomineeNames, v.position, count(*) as cnt from Vote v GROUP BY v.nomineeNames ORDER BY cnt DESC");
+			Query qry = em.createQuery("SELECT  v.nomineeNames, v.position, count(*) as cnt from Vote v GROUP BY v.nomineeNames,  v.position ORDER BY cnt DESC");
 			
 			List<Object[]> objects = qry.getResultList();
 			for(Object[] object : objects){

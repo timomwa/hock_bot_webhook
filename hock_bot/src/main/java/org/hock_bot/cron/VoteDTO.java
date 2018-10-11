@@ -14,6 +14,7 @@ public class VoteDTO implements Serializable {
 	public VoteDTO(String nominee, String position, Long count){
 		this.nominee = nominee;
 		this.count = count;
+		this.position = position;
 	}
 	public String getNominee() {
 		return nominee;
