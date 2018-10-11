@@ -6,4 +6,6 @@ public interface FlowPositionDAOI extends GenericDAOI<FlowPosition, Long>  {
 
 	FlowPosition findFlowPosition(Long chatId, Integer userId);
 
+	void deletePreviousMarkers(Long chatId, Integer voterUserId);
+
 }

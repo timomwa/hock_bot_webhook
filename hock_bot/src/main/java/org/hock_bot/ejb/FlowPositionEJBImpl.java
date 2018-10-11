@@ -36,4 +36,9 @@ public class FlowPositionEJBImpl implements FlowPositionEJBI {
 		flowPositionDAO.deleteById(id);
 	}
 
+	@Override
+	public void deletePreviousMarkers(Long chatId, Integer voterUserId) {
+		flowPositionDAO.deletePreviousMarkers(chatId, voterUserId);
+	}
+
 }

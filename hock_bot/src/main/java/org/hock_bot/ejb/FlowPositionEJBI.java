@@ -10,4 +10,6 @@ public interface FlowPositionEJBI {
 
 	public void deleteById(Long id) throws Exception;
 
+	public void deletePreviousMarkers(Long chatId, Integer voterUserId);
+
 }

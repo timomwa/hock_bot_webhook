@@ -31,4 +31,21 @@ public class FlowPositionDAOImpl extends GenericDAOImpl<FlowPosition, Long> impl
 		return position;
 	}
 
+	@Override
+	public void deletePreviousMarkers(Long chatId, Integer userId) {
+		try{
+			
+			Query qry = em.createQuery("DELETE FROM FlowPosition fp WHERE fp.chatId = :chatId AND fp.userId = :userId");
+			qry.setParameter("chatId", chatId);
+			qry.setParameter("userId", userId);
+			qry.executeUpdate();
+			
+		}catch(NoResultException e){
+			
+		}catch(Exception e){
+			logger.error(e.getMessage(), e);
+		}
+		
+	}
+
 }

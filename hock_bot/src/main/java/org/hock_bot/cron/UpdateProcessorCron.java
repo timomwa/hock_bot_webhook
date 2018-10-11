@@ -462,6 +462,8 @@ public class UpdateProcessorCron {
 							String positionChosen = getChosen(data, positions);
 							Integer voterUserId = update.getCallbackQuery().getFromUser().getUserId();
 							
+							flowPositionEJB.deletePreviousMarkers(update.getMessage().getChat().getChatId(),  voterUserId);
+							
 							FlowPosition position = flowPositionEJB.createMarker(update.getMessage().getChat().getChatId(),  voterUserId, positionChosen);
 							logger.info("\n\n\n\t position -> "+position+"\n\n");
 							
@@ -644,13 +646,7 @@ public class UpdateProcessorCron {
 							jsob.put("reply_markup", replyKeyboardRemove);
 						}else{
 							
-							Message lastMessage = update.getMessage();
-							logger.info("\n\n\n\t data -> "+lastMessage+"\n\n");
-							String lastSentText = "";
-							if(lastMessage!=null){
-								lastSentText = sanitize( lastMessage.getText() );
-							}
-							logger.info("\n\n\n\t lastSentText -> "+lastSentText+"\n\n");
+							
 							FlowPosition position = flowPositionEJB.findFlowPosition(update.getMessage().getChat().getChatId(), update.getMessage().getFromUser().getUserId());
 							logger.info("\n\n\n\t position -> "+position+"\n\n");
 							
@@ -768,7 +764,8 @@ public class UpdateProcessorCron {
 	private boolean equalsAny(String data, List<String> positions) {
 		
 		for(String position : positions){
-			if(data.contains(position)){
+			logger.info(" data -> "+data+", position-> "+position+", MATCH?? "+data.equalsIgnoreCase(position) );
+			if(data.equalsIgnoreCase(position)){
 				return true;
 			}
 		}
