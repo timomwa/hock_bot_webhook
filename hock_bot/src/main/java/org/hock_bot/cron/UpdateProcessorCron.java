@@ -412,7 +412,7 @@ public class UpdateProcessorCron {
 							
 							Vote nominationVoteCast = nomineeEJB.findbyVoterUserIdAndPosition(update.getCallbackQuery().getFromUser().getUserId(), positionChosen);
 							
-							logger.error("\n\n\n\t nominationVoteCast -> "+nominationVoteCast+"\n\n");
+							logger.info("\n\n\n\t nominationVoteCast -> "+nominationVoteCast+"\n\n");
 							
 							if(nominationVoteCast!=null 
 									&& nominationVoteCast.getNomineeNames()!=null 
@@ -440,7 +440,7 @@ public class UpdateProcessorCron {
 								nominationVoteCast = nomineeEJB.saveOrUpdate(nominationVoteCast);
 								
 								jsob.put("chat_id", chat_C.getChatId());
-								//jsob.put("message_id", message_C.getMessageId());
+								jsob.put("message_id", message_C.getMessageId());
 								jsob.put("parse_mode", "markdown");
 								jsob.put("text", "Thank you *"+update.getCallbackQuery().getFromUser().getUserName()+"*. Your self nomination for the *"+positionChosen+"* has been received now waiting approval.");
 							
