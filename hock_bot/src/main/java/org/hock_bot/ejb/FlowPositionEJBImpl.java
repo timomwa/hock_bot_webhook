@@ -31,4 +31,9 @@ public class FlowPositionEJBImpl implements FlowPositionEJBI {
 		return flowPositionDAO.findFlowPosition(chatId, userId);
 	}
 
+	@Override
+	public void deleteById(Long id) throws Exception{
+		flowPositionDAO.deleteById(id);
+	}
+
 }

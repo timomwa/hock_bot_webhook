@@ -657,17 +657,18 @@ public class UpdateProcessorCron {
 							
 							if( equalsAny(position.getPositionMarker(), positions) ){
 								
+								
 								Vote nominationVoteCast = new Vote();
 								
-								String nomineeNames = sanitize( update.getCallbackQuery().getFromUser().getFirstName() )
+								String nomineeNames = sanitize( update.getMessage().getFromUser().getFirstName() )
 										.concat(" ")
-										.concat( sanitize(update.getCallbackQuery().getFromUser().getLastName() ) );
+										.concat( sanitize(update.getMessage().getFromUser().getLastName() ) );
 								
-								nominationVoteCast.setVoterUserId(update.getCallbackQuery().getFromUser().getUserId());
+								nominationVoteCast.setVoterUserId(update.getMessage().getFromUser().getUserId());
 								nominationVoteCast.setPosition(position.getPositionMarker());
 								nominationVoteCast.setNomineeNames(sourceMsg);
 								
-								String username = update.getCallbackQuery().getFromUser().getUserName();
+								String username = update.getMessage().getFromUser().getUserName();
 								
 								if(username==null || username.equals("null")){
 									username = nomineeNames.replaceAll("[\\s]", "");
@@ -681,6 +682,8 @@ public class UpdateProcessorCron {
 								jsob.put("parse_mode", "markdown");
 								respText = "You have nominated *"+sourceMsg+"* for the *"+position.getPositionMarker()+"* position. Thank you! To see the results as they come in, reply with /results.";
 							
+								
+								flowPositionEJB.deleteById(position.getId());
 							}else{
 								respText = "Reply with /start to start nominating members for official positions.";
 							}
@@ -710,7 +713,7 @@ public class UpdateProcessorCron {
 					}
 					
 				}catch(Exception e){
-					logger.error(e.getMessage());
+					logger.error(e.getMessage(), e);
 					try{
 						updateEJB.updateStatus(Status.FAILED_TEMPORARILY, update.getId());
 					}catch(Exception ex){}

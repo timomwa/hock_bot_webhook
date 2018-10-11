@@ -8,4 +8,6 @@ public interface FlowPositionEJBI {
 
 	public FlowPosition findFlowPosition(Long chatId, Integer userId);
 
+	public void deleteById(Long id) throws Exception;
+
 }
