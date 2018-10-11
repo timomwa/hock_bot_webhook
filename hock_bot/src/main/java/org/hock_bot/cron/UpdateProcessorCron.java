@@ -612,6 +612,7 @@ public class UpdateProcessorCron {
 						logger.info(" sourceMsg ::: "+sourceMsg);
 						
 						if(sourceMsg!=null &&  sourceMsg.equalsIgnoreCase("/results") ){
+							
 							List<VoteDTO> votesDTO = nomineeEJB.doTally();
 							String tally = "";
 							BigDecimal totalVotesCast = BigDecimal.ZERO;
