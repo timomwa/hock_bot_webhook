@@ -1,8 +1,12 @@
 package org.hock_bot.model;
 
+import java.util.Date;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Index;
+import javax.persistence.PrePersist;
+import javax.persistence.PreUpdate;
 import javax.persistence.Table;
 
 import org.hock_bot.core.ConfigurationI;
@@ -30,6 +34,10 @@ public class Vote extends AbstractEntity {
 	
 	@Column(name="position")
 	private String position;
+	
+	
+	@Column(name="timeStamp")
+	private Date timeStamp;
 
 	public String getNomineeUsername() {
 		return nomineeUsername;
@@ -71,6 +79,23 @@ public class Vote extends AbstractEntity {
 		this.voterUserId = voterUserId;
 	}
 
+	public Date getTimeStamp() {
+		return timeStamp;
+	}
+
+	public void setTimeStamp(Date timeStamp) {
+		this.timeStamp = timeStamp;
+	}
+	
+	@PrePersist
+	@PreUpdate
+	public void update(){
+		if(timeStamp==null){
+			timeStamp = new Date();
+		}
+		
+	} 
+
 	@Override
 	public String toString() {
 		StringBuilder builder = new StringBuilder();
@@ -84,10 +109,11 @@ public class Vote extends AbstractEntity {
 		builder.append(nomineeNames);
 		builder.append(", \n\tposition=");
 		builder.append(position);
+		builder.append(", \n\ttimeStamp=");
+		builder.append(timeStamp);
 		builder.append("\n]\n");
 		return builder.toString();
 	}
-
 	
 
 }
