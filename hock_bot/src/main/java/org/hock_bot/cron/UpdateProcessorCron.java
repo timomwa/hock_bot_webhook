@@ -407,7 +407,7 @@ public class UpdateProcessorCron {
 									nominationVoteCast.setNomineeUsername( username );
 									nominationVoteCast.setSelfNomination(Boolean.TRUE);
 									
-									nominationVoteCast = nomineeEJB.saveOrUpdate(nominationVoteCast);
+									//nominationVoteCast = nomineeEJB.saveOrUpdate(nominationVoteCast);
 									
 									
 								
@@ -537,7 +537,7 @@ public class UpdateProcessorCron {
 								if(username==null || username.equals("null")){
 									username = names.replaceAll("[\\s]", "");
 								}
-								jsob.put("text", "Sorry *"+username+"*, you can only vote once per position. \nYou had already nominated *"+nominationVoteCast.getNomineeNames()+"* for the *"+nominationVoteCast.getPosition()+"* position. \n\nFeel free to nominate yourself or other members for other positions.");
+								jsob.put("text", "Sorry *"+username+"*, you can only vote once per position. \n\nYou had already nominated *"+nominationVoteCast.getNomineeNames()+"* for the *"+nominationVoteCast.getPosition()+"* position. \n\nFeel free to nominate yourself or other members for other positions.");
 					
 								
 							}else{
@@ -561,7 +561,7 @@ public class UpdateProcessorCron {
 								}
 								
 								nominationVoteCast.setNomineeUsername( username );
-								//** se if this has any use?? nominationVoteCast = nomineeEJB.saveOrUpdate(nominationVoteCast);
+								nominationVoteCast = nomineeEJB.saveOrUpdate(nominationVoteCast);
 								
 								logger.info("\n\n\n\t nominationVoteCast -> "+nominationVoteCast+"\n\n");
 								
@@ -634,7 +634,15 @@ public class UpdateProcessorCron {
 							reply_markup.put("resize_keyboard", true);
 							reply_markup.put("one_time_keyboard", true);
 							reply_markup.put("selective", false);
-							jsob.put("text", "Dear member. \nTime has come to hand in the reighns of this excellent group to new officials. \nIt is with this regard, we need to hold an AGM to elect new office bearers. \n\nWould you like to nominate yourself or someone for an official position?");
+							
+							String username = message.getFromUser().getUserName();
+							String names = sanitize( update.getCallbackQuery().getFromUser().getFirstName() )
+									.concat(" ")
+									.concat( sanitize(update.getCallbackQuery().getFromUser().getLastName() ) );
+							if(username==null || username.equals("null")){
+								username = names.replaceAll("[\\s]", "");
+							}
+							jsob.put("text", "Dear *"+username+"*. \n\nTime has come to hand in the reighns of this excellent group to new officials. \nIt is with this regard, we need to hold an AGM to elect new office bearers. \n\nWould you like to nominate yourself or someone for an official position?");
 							jsob.put("reply_markup", reply_markup);
 							
 						}else if(sourceMsg!=null && sourceMsg.equalsIgnoreCase("/service")){
