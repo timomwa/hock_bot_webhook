@@ -344,37 +344,12 @@ public class UpdateProcessorCron {
 									username = names.replaceAll("[\\s]", "");
 								}
 								jsob.put("parse_mode", "markdown");
-								List<VoteDTO> votesDTO = nomineeEJB.doTally();
-								String tally = "";
-								BigDecimal totalVotesCast = BigDecimal.ZERO;
-								for(VoteDTO votedto : votesDTO){
-									totalVotesCast = totalVotesCast.add( BigDecimal.valueOf( votedto.getCount()) );
-								}
-								
-								int position = 0;
-								for(VoteDTO votedto : votesDTO){
-									position++;
-									tally = (tally + (!tally.isEmpty()? "\n\n\n": "") ) + "*"+position + ".* "+ votedto.getNominee() + "\nfor *"+ votedto.getPosition() +"* : "+ votedto.getCount() +" (*"+calculatePercentage(totalVotesCast, votedto.getCount()) +"%*) ";
-								}
-								tally = tally +"\n\n\nTotal Votes Cast - "+totalVotesCast.toPlainString()+"\n\nTo cast your vote, reply with\n/start";
-								
+								String tally = doTally(positions);
 								jsob.put("text", "Ok. Thank you *"+username+"*. However, you can always take part in the nomination whenever you change your mind.\n\nReply with /start to vote.\n\nResults So far;\n\n\n"+tally);
 								
 							}else if(data.contains("SEE RESULTS SO FAR")){
 								
-								List<VoteDTO> votesDTO = nomineeEJB.doTally();
-								String tally = "";
-								BigDecimal totalVotesCast = BigDecimal.ZERO;
-								for(VoteDTO votedto : votesDTO){
-									totalVotesCast = totalVotesCast.add( BigDecimal.valueOf( votedto.getCount()) );
-								}
-								
-								int position = 0;
-								for(VoteDTO votedto : votesDTO){
-									position++;
-									tally = (tally + (!tally.isEmpty()? "\n\n\n": "") ) + "*"+position + ".* "+ votedto.getNominee() + "\nfor *"+ votedto.getPosition() +"* : "+ votedto.getCount() +" (*"+calculatePercentage(totalVotesCast, votedto.getCount()) +"%*) ";
-								}
-								tally = tally +"\n\n\nTotal Votes Cast - "+totalVotesCast.toPlainString()+"\n\nTo cast your vote, reply with\n/start";
+								String tally = doTally(positions);
 								jsob.put("chat_id", chat_C.getChatId());
 								jsob.put("message_id", message_C.getMessageId());
 								jsob.put("text", tally);
@@ -614,20 +589,7 @@ public class UpdateProcessorCron {
 									jsob.put("parse_mode", "markdown");
 									
 									
-									List<VoteDTO> votesDTO = nomineeEJB.doTally();
-									String tally = "";
-									BigDecimal totalVotesCast = BigDecimal.ZERO;
-									for(VoteDTO votedto : votesDTO){
-										totalVotesCast = totalVotesCast.add( BigDecimal.valueOf( votedto.getCount()) );
-									}
-									
-									int position = 0;
-									for(VoteDTO votedto : votesDTO){
-										position++;
-										tally = (tally + (!tally.isEmpty()? "\n\n\n": "") ) + "*"+position + ".* "+ votedto.getNominee() + "\nfor *"+ votedto.getPosition() +"* : "+ votedto.getCount() +" (*"+calculatePercentage(totalVotesCast, votedto.getCount()) +"%*) ";
-									}
-									tally = tally +"\n\n\nTotal Votes Cast - "+totalVotesCast.toPlainString()+"\n\nTo cast your vote, reply with\n/start";
-									
+									String tally = doTally(positions);
 									jsob.put("text", "Thank you *"+username+"*. \nYour self nomination for the *"+positionChosen+"* has been received.\n\nNote: Your nomination is subject to incumbent officials' evaluation.\n\n\nResults so far\n\n"+tally);
 								
 								}else{
@@ -636,21 +598,7 @@ public class UpdateProcessorCron {
 									jsob.put("message_id", message_C.getMessageId());
 									jsob.put("parse_mode", "markdown");
 									
-									List<VoteDTO> votesDTO = nomineeEJB.doTally();
-									String tally = "";
-									BigDecimal totalVotesCast = BigDecimal.ZERO;
-									
-									for(VoteDTO votedto : votesDTO){
-										totalVotesCast = totalVotesCast.add( BigDecimal.valueOf( votedto.getCount()) );
-									}
-									
-									int position = 0;
-									for(VoteDTO votedto : votesDTO){
-										position++;
-										tally = (tally + (!tally.isEmpty()? "\n\n\n": "") ) + "*"+position + ".* "+ votedto.getNominee() + "\nfor *"+ votedto.getPosition() +"* : "+ votedto.getCount() +" (*"+calculatePercentage(totalVotesCast, votedto.getCount()) +"%*) ";
-									}
-									tally = tally +"\n\n\nTotal Votes Cast - "+totalVotesCast.toPlainString()+"\n\nTo cast your vote, reply with\n/start";
-									
+									String tally = doTally(positions);
 									jsob.put("text", "Sorry *"+username+"*. \nYou have already nominated yourself for the *"+existingNomination.getPosition()+"* position. \n\nYou cannot nominate yourself for more than one position.\n\n"+tally);
 									
 								}
@@ -695,30 +643,7 @@ public class UpdateProcessorCron {
 						
 						if(sourceMsg!=null &&  sourceMsg.equalsIgnoreCase("/results") ){
 							
-							BigDecimal absoluteTotalVotesCast = BigDecimal.ZERO;
-							
-							String tally = "";
-							
-							for(String post: positions){
-								
-								List<VoteDTO> votesDTO = nomineeEJB.doTally(post);
-								BigDecimal totalVotesCast = BigDecimal.ZERO;
-								for(VoteDTO votedto : votesDTO){
-									totalVotesCast = totalVotesCast.add( BigDecimal.valueOf( votedto.getCount()) );
-								}
-								absoluteTotalVotesCast = absoluteTotalVotesCast.add( totalVotesCast );
-								
-								int position = 0;
-								tally = tally + (!tally.isEmpty()? "\n": "\n\n") + "Position: *"+post+"*\n--------------------";
-								for(VoteDTO votedto : votesDTO){
-									position++;
-									tally = (tally + (!tally.isEmpty()? "\n\n\n": "") ) + "*"+position + ".* "+ votedto.getNominee() + "\nfor *"+ votedto.getPosition() +"* : "+ votedto.getCount() +" (*"+calculatePercentage(totalVotesCast, votedto.getCount()) +"%*) ";
-								}
-								tally = tally +"\n\n\nTotal *"+post+"* Votes - "+totalVotesCast.toPlainString()+"\n--------------------\n\n";
-								
-							}
-							
-							tally = tally +"\n\nTotal Votes (All Positions) - "+absoluteTotalVotesCast.toPlainString()+"\n\nTo cast your vote, reply with\n/start";
+							String tally = doTally(positions);
 							jsob.put("text", tally);
 							jsob.put("parse_mode", "markdown");
 							
@@ -902,6 +827,36 @@ public class UpdateProcessorCron {
 			logger.error(e.getMessage(), e);
 		}
 		
+	}
+
+
+
+	private String doTally(List<String> positions) {
+		BigDecimal absoluteTotalVotesCast = BigDecimal.ZERO;
+		
+		String tally = "";
+		
+		for(String post: positions){
+			
+			List<VoteDTO> votesDTO = nomineeEJB.doTally(post);
+			BigDecimal totalVotesCast = BigDecimal.ZERO;
+			for(VoteDTO votedto : votesDTO){
+				totalVotesCast = totalVotesCast.add( BigDecimal.valueOf( votedto.getCount()) );
+			}
+			absoluteTotalVotesCast = absoluteTotalVotesCast.add( totalVotesCast );
+			
+			int position = 0;
+			tally = tally + (!tally.isEmpty()? "\n": "\n\n") + "\n-----------------------------\n\nPosition: *"+post+"*";
+			for(VoteDTO votedto : votesDTO){
+				position++;
+				tally = (tally + (!tally.isEmpty()? "\n\n": "") ) + "*"+position + ".* "+ votedto.getNominee() + "\n  Votes - "+ votedto.getCount() +" (*"+calculatePercentage(totalVotesCast, votedto.getCount()) +"%*) ";
+			}
+			tally = tally +"\n\nTotal *"+post+"* Votes - "+totalVotesCast.toPlainString()+"\n-----------------------------\n\n\n\n";
+			
+		}
+		
+		tally = tally +"\n\nTotal Votes (All Positions) - "+absoluteTotalVotesCast.toPlainString()+"\n\nTo cast your vote, reply with\n/start";
+		return tally;
 	}
 
 
