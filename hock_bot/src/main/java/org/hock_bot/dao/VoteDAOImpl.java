@@ -91,6 +91,6 @@ public class VoteDAOImpl  extends GenericDAOImpl<Vote, Long> implements VoteDAOI
 		
 		return nominationVote;
 	}
-	}
+	
 
 }
