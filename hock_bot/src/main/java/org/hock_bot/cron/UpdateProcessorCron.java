@@ -434,6 +434,7 @@ public class UpdateProcessorCron {
 										.concat(" ")
 										.concat( sanitize(update.getCallbackQuery().getFromUser().getLastName() ) );
 								
+								nominationVoteCast.setVoterUserId(update.getCallbackQuery().getFromUser().getUserId());
 								nominationVoteCast.setPosition(positionChosen);
 								nominationVoteCast.setNomineeNames(nomineeNames);
 								nominationVoteCast.setNomineeUsername( update.getCallbackQuery().getFromUser().getUserName() );
