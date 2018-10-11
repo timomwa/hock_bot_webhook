@@ -360,7 +360,6 @@ public class UpdateProcessorCron {
 								
 							}else if(data.contains("SEE RESULTS SO FAR")){
 								
-								jsob.put("parse_mode", "markdown");
 								List<VoteDTO> votesDTO = nomineeEJB.doTally();
 								String tally = "";
 								BigDecimal totalVotesCast = BigDecimal.ZERO;
@@ -374,6 +373,8 @@ public class UpdateProcessorCron {
 									tally = (tally + (!tally.isEmpty()? "\n\n\n": "") ) + "*"+position + ".* "+ votedto.getNominee() + "\nfor *"+ votedto.getPosition() +"* : "+ votedto.getCount() +" (*"+calculatePercentage(totalVotesCast, votedto.getCount()) +"%*) ";
 								}
 								tally = tally +"\nTotal Votes Cast - "+totalVotesCast.toPlainString()+"\n\nTo cast your vote, reply with\n/start";
+								jsob.put("chat_id", chat_C.getChatId());
+								jsob.put("message_id", message_C.getMessageId());
 								jsob.put("text", tally);
 								jsob.put("parse_mode", "markdown");
 								
