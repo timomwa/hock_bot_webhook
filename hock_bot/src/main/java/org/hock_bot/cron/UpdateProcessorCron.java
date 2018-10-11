@@ -1,6 +1,7 @@
 package org.hock_bot.cron;
 
 import java.util.concurrent.atomic.AtomicInteger;
+import java.net.URLEncoder;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
@@ -417,7 +418,7 @@ public class UpdateProcessorCron {
 									if(username==null || username.equals("null")){
 										username = names.replaceAll("[\\s]", "");
 									}
-									msg = "Ok, *"+username+"*, please select the position for which you want to nominate an individual for";
+									msg = "Ok, *"+username+"*, please select the position for which you want to nominate an individual for.";
 									jsob.put("parse_mode", "markdown");
 									jsob.put("text", msg);
 									
@@ -453,6 +454,24 @@ public class UpdateProcessorCron {
 							//Get whether they last selected a position?
 							//Mark as waiting for position.
 							logger.info("\n\n\n\t data -> "+data+"\n\n");
+							String positionChosen = getChosen(data, positions);
+							Integer voterUserId = update.getCallbackQuery().getFromUser().getUserId();
+							
+							
+							String names = sanitize( update.getCallbackQuery().getFromUser().getFirstName() )
+									.concat(" ")
+									.concat( sanitize(update.getCallbackQuery().getFromUser().getLastName() ) );
+							String username = update.getCallbackQuery().getFromUser().getUserName();
+							
+							if(username==null || username.equals("null")){
+								username = names.replaceAll("[\\s]", "");
+							}
+							String msg = "Alright *"+username+"*, please enter the full names of the individual you would like to nominate for the *"+positionChosen+"* position.";
+							jsob.put("chat_id", chat_C.getChatId());
+							jsob.put("message_id", message_C.getMessageId());
+							jsob.put("parse_mode", "markdown");
+							jsob.put("remove_keyboard", true);
+							jsob.put("text", msg);
 							
 							
 						}else if( containsAny(data, positions) ){
@@ -486,7 +505,7 @@ public class UpdateProcessorCron {
 								if(username==null || username.equals("null")){
 									username = names.replaceAll("[\\s]", "");
 								}
-								jsob.put("text", "Sorry *"+username+"*, you can only vote once. You had already nominated *"+nominationVoteCast.getNomineeNames()+"* for the *"+nominationVoteCast.getPosition()+"* position.");
+								jsob.put("text", URLEncoder.encode("Sorry *"+username+"*, you can only vote once per position. \nYou had already nominated *"+nominationVoteCast.getNomineeNames()+"* for the *"+nominationVoteCast.getPosition()+"* position. \n\nFeel free to nominate yourself or other members for other positions.","UTF-8") );
 					
 								
 							}else{
@@ -559,7 +578,7 @@ public class UpdateProcessorCron {
 						
 						logger.info(" sourceMsg ::: "+sourceMsg);
 						
-						if(sourceMsg!=null && sourceMsg.equalsIgnoreCase("/nomination")){
+						if(sourceMsg!=null && ( sourceMsg.equalsIgnoreCase("/nomination") || sourceMsg.equalsIgnoreCase("/start") )){
 							
 							String[] a = {"YES", "NO"};
 							List<String> yesandNo = Arrays.asList(a);
@@ -583,7 +602,7 @@ public class UpdateProcessorCron {
 							reply_markup.put("resize_keyboard", true);
 							reply_markup.put("one_time_keyboard", true);
 							reply_markup.put("selective", false);
-							jsob.put("text", "Dear member. Time has come to hand in the reighns of this excellent to group to new officials. It is with this regard, we need to hold an AGM to elect new office bearers. Would you like to nominate yourself or someone for an official position?");
+							jsob.put("text", "Dear member. Time has come to hand in the reighns of this excellent group to new officials. It is with this regard, we need to hold an AGM to elect new office bearers. Would you like to nominate yourself or someone for an official position?");
 							jsob.put("reply_markup", reply_markup);
 							
 						}else if(sourceMsg!=null && sourceMsg.equalsIgnoreCase("/service")){
