@@ -653,31 +653,61 @@ public class UpdateProcessorCron {
 							
 							if( equalsAny(position.getPositionMarker(), positions) ){
 								
+								Integer voterUserId = update.getMessage().getFromUser().getUserId();
+								Vote nominationVoteCast = nomineeEJB.findbyVoterUserIdAndPosition(voterUserId, position.getPositionMarker());
 								
-								Vote nominationVoteCast = new Vote();
+								logger.info("\n\n\n\t nominationVoteCast -> "+nominationVoteCast+"\n\n");
 								
-								String nomineeNames = sanitize( update.getMessage().getFromUser().getFirstName() )
-										.concat(" ")
-										.concat( sanitize(update.getMessage().getFromUser().getLastName() ) );
+								if(nominationVoteCast!=null 
+										&& nominationVoteCast.getNomineeNames()!=null 
+										&& nominationVoteCast.getPosition()!=null 
+										&& !nominationVoteCast.getPosition().trim().isEmpty()
+										&& !nominationVoteCast.getNomineeNames().trim().isEmpty() ){
+									
+									jsob.put("chat_id", update.getMessage().getChat().getChatId());
+									jsob.put("message_id", update.getMessage().getMessageId());
+									jsob.put("parse_mode", "markdown");
+									
+									String names = sanitize( update.getCallbackQuery().getFromUser().getFirstName() )
+											.concat(" ")
+											.concat( sanitize(update.getCallbackQuery().getFromUser().getLastName() ) );
+									String username = update.getCallbackQuery().getFromUser().getUserName();
+									
+									if(username==null || username.equals("null")){
+										username = names.replaceAll("[\\s]", "");
+									}
+									jsob.put("text", URLEncoder.encode("Sorry *"+username+"*, you can only vote once per position. \nYou had already nominated *"+nominationVoteCast.getNomineeNames()+"* for the *"+nominationVoteCast.getPosition()+"* position. \n\nFeel free to nominate yourself or other members for other positions.","UTF-8") );
+						
+									
+								}else{
 								
-								nominationVoteCast.setVoterUserId(update.getMessage().getFromUser().getUserId());
-								nominationVoteCast.setPosition(position.getPositionMarker());
-								nominationVoteCast.setNomineeNames(sourceMsg);
 								
-								String username = update.getMessage().getFromUser().getUserName();
-								
-								if(username==null || username.equals("null")){
-									username = nomineeNames.replaceAll("[\\s]", "");
+									if(nominationVoteCast==null){
+										nominationVoteCast = new Vote();
+									}
+									
+									String nomineeNames = sanitize( update.getMessage().getFromUser().getFirstName() )
+											.concat(" ")
+											.concat( sanitize(update.getMessage().getFromUser().getLastName() ) );
+									
+									nominationVoteCast.setVoterUserId(update.getMessage().getFromUser().getUserId());
+									nominationVoteCast.setPosition(position.getPositionMarker());
+									nominationVoteCast.setNomineeNames(sourceMsg);
+									
+									String username = update.getMessage().getFromUser().getUserName();
+									
+									if(username==null || username.equals("null")){
+										username = nomineeNames.replaceAll("[\\s]", "");
+									}
+									
+									nominationVoteCast.setNomineeUsername( sourceMsg );
+									nominationVoteCast.setSelfNomination(Boolean.FALSE);
+									
+									nominationVoteCast = nomineeEJB.saveOrUpdate(nominationVoteCast);
+									
+									jsob.put("parse_mode", "markdown");
+									respText = "You have nominated *"+sourceMsg+"* for the *"+position.getPositionMarker()+"* position. Thank you! To see the results as they come in, reply with /results.";
 								}
-								
-								nominationVoteCast.setNomineeUsername( sourceMsg );
-								nominationVoteCast.setSelfNomination(Boolean.FALSE);
-								
-								nominationVoteCast = nomineeEJB.saveOrUpdate(nominationVoteCast);
-								
-								jsob.put("parse_mode", "markdown");
-								respText = "You have nominated *"+sourceMsg+"* for the *"+position.getPositionMarker()+"* position. Thank you! To see the results as they come in, reply with /results.";
-							
 								
 								flowPositionEJB.deleteById(position.getId());
 							}else{
