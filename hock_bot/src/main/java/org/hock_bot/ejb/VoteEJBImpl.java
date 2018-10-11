@@ -25,4 +25,9 @@ public class VoteEJBImpl implements VoteEJBI {
 		return voteDAO.save(nominationVoteCast);
 	}
 
+	@Override
+	public Vote findbyVoterUserIdAndPosition(Integer userId, String position) {
+		return voteDAO.findbyVoterUserIdAndPosition(userId, position);
+	}
+
 }

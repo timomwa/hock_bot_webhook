@@ -8,4 +8,6 @@ public interface VoteEJBI {
 
 	Vote saveOrUpdate(Vote nominationVoteCast) throws Exception;
 
+	Vote findbyVoterUserIdAndPosition(Integer userId, String positionChosen);
+
 }

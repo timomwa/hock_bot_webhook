@@ -339,18 +339,7 @@ public class UpdateProcessorCron {
 							Vote nominationVoteCast = nomineeEJB.findbyVoterUserId(update.getCallbackQuery().getFromUser().getUserId());
 							
 							
-							if(nominationVoteCast!=null 
-									&& nominationVoteCast.getNomineeNames()!=null 
-									&& nominationVoteCast.getPosition()!=null 
-									&& !nominationVoteCast.getPosition().trim().isEmpty()
-									&& !nominationVoteCast.getNomineeNames().trim().isEmpty() ){
-								
-								jsob.put("chat_id", chat_C.getChatId());
-								jsob.put("message_id", message_C.getMessageId());
-								jsob.put("text", "Sorry "+update.getCallbackQuery().getFromUser().getUserName()+", you can only vote once. You had already nominated "+nominationVoteCast.getNomineeNames()+" for the "+nominationVoteCast.getPosition()+" position.");
-					
-								
-							}else{
+							{
 								
 								if(nominationVoteCast==null){
 									nominationVoteCast = new Vote();
@@ -358,17 +347,19 @@ public class UpdateProcessorCron {
 									
 								}
 								
+								jsob.put("chat_id", chat_C.getChatId());
+								jsob.put("message_id", message_C.getMessageId());
+								jsob.put("parse_mode", "html");
 								
 								if(data.contains("Myself")){
 									
 									
-									msg = "Ok, "+update.getCallbackQuery().getFromUser().getUserName()+", which position would you like to vie for?";
+									msg = "Ok, <b>"+update.getCallbackQuery().getFromUser().getUserName()+"</b>, which position would you like to vie for?";
 									jsob.put("text", msg);
 									
 									
 									
-									jsob.put("chat_id", chat_C.getChatId());
-									jsob.put("message_id", message_C.getMessageId());
+									
 									jsob.put("text", msg);
 									
 									for(String position : positions){
@@ -407,7 +398,8 @@ public class UpdateProcessorCron {
 								
 								}else{
 									
-									msg = "Ok, "+update.getCallbackQuery().getFromUser().getUserName()+", who in the group would you like to nominate?";
+									jsob.put("parse_mode", "html");
+									msg = "Ok, <b>"+update.getCallbackQuery().getFromUser().getUserName()+"</b>, who in the group would you like to nominate?";
 								
 								}
 								
@@ -418,16 +410,41 @@ public class UpdateProcessorCron {
 							
 							String positionChosen = getChosen(data, positions);
 							
-							Vote nominationVoteCast = nomineeEJB.findbyVoterUserId(update.getCallbackQuery().getFromUser().getUserId());
-							if(nominationVoteCast!=null){
-								nominationVoteCast.setPosition(positionChosen);
+							Vote nominationVoteCast = nomineeEJB.findbyVoterUserIdAndPosition(update.getCallbackQuery().getFromUser().getUserId(), positionChosen);
+							
+							if(nominationVoteCast!=null 
+									&& nominationVoteCast.getNomineeNames()!=null 
+									&& nominationVoteCast.getPosition()!=null 
+									&& !nominationVoteCast.getPosition().trim().isEmpty()
+									&& !nominationVoteCast.getNomineeNames().trim().isEmpty() ){
+								
+								jsob.put("chat_id", chat_C.getChatId());
+								jsob.put("message_id", message_C.getMessageId());
+								jsob.put("text", "Sorry "+update.getCallbackQuery().getFromUser().getUserName()+", you can only vote once. You had already nominated "+nominationVoteCast.getNomineeNames()+" for the "+nominationVoteCast.getPosition()+" position.");
+					
+								
+							}else{
+								
+								if(nominationVoteCast==null){
+									nominationVoteCast = new Vote();
+								}
+								String nomineeNames = sanitize( update.getCallbackQuery().getFromUser().getFirstName() )
+										.concat(" ")
+										.concat( sanitize(update.getCallbackQuery().getFromUser().getLastName() ) );
+								
+								nominationVoteCast.setNomineeNames(nomineeNames);
+								nominationVoteCast.setNomineeUsername( update.getCallbackQuery().getFromUser().getUserName() );
 								nominationVoteCast = nomineeEJB.saveOrUpdate(nominationVoteCast);
+								
+								jsob.put("chat_id", chat_C.getChatId());
+								jsob.put("message_id", message_C.getMessageId());
+								jsob.put("parse_mode", "html");
+								jsob.put("text", "Thank you <b>"+update.getCallbackQuery().getFromUser().getUserName()+"</b>. Your self nomination for the <b><i>"+positionChosen+"</i></b> has been received now waiting approval.");
+							
+								
 							}
 							
-							jsob.put("chat_id", chat_C.getChatId());
-							jsob.put("message_id", message_C.getMessageId());
-							jsob.put("text", "Thank you "+update.getCallbackQuery().getFromUser().getUserName()+". Your self nomination for the "+positionChosen+" has been received now waiting approval.");
-						
+							
 							
 						}
 						

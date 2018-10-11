@@ -2,12 +2,13 @@ package org.hock_bot.model;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.Index;
 import javax.persistence.Table;
 
 import org.hock_bot.core.ConfigurationI;
 
 @Entity
-@Table(name = "vote", catalog = ConfigurationI.CATALOG)
+@Table(name = "vote", catalog = ConfigurationI.CATALOG, indexes={@Index(name="voterPostIdx", columnList="voterUserId, position")})
 public class Vote extends AbstractEntity {
 
 	/**
