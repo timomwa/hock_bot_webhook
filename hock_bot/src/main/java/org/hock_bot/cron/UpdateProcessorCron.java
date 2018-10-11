@@ -354,7 +354,7 @@ public class UpdateProcessorCron {
 									position++;
 									tally = (tally + (!tally.isEmpty()? "\n\n\n": "") ) + "*"+position + ".* "+ votedto.getNominee() + "\nfor *"+ votedto.getPosition() +"* : "+ votedto.getCount() +" (*"+calculatePercentage(totalVotesCast, votedto.getCount()) +"%*) ";
 								}
-								tally = tally +"\nTotal Votes Cast - "+totalVotesCast.toPlainString()+"\n\nTo cast your vote, reply with\n/start";
+								tally = tally +"\n\n\nTotal Votes Cast - "+totalVotesCast.toPlainString()+"\n\nTo cast your vote, reply with\n/start";
 								
 								jsob.put("text", "Ok. Thank you *"+username+"*. However, you can always take part in the nomination whenever you change your mind.\n\nReply with /start to vote.\n\nResults So far;\n\n\n"+tally);
 								
@@ -372,7 +372,7 @@ public class UpdateProcessorCron {
 									position++;
 									tally = (tally + (!tally.isEmpty()? "\n\n\n": "") ) + "*"+position + ".* "+ votedto.getNominee() + "\nfor *"+ votedto.getPosition() +"* : "+ votedto.getCount() +" (*"+calculatePercentage(totalVotesCast, votedto.getCount()) +"%*) ";
 								}
-								tally = tally +"\nTotal Votes Cast - "+totalVotesCast.toPlainString()+"\n\nTo cast your vote, reply with\n/start";
+								tally = tally +"\n\n\nTotal Votes Cast - "+totalVotesCast.toPlainString()+"\n\nTo cast your vote, reply with\n/start";
 								jsob.put("chat_id", chat_C.getChatId());
 								jsob.put("message_id", message_C.getMessageId());
 								jsob.put("text", tally);
@@ -618,7 +618,7 @@ public class UpdateProcessorCron {
 									position++;
 									tally = (tally + (!tally.isEmpty()? "\n\n\n": "") ) + "*"+position + ".* "+ votedto.getNominee() + "\nfor *"+ votedto.getPosition() +"* : "+ votedto.getCount() +" (*"+calculatePercentage(totalVotesCast, votedto.getCount()) +"%*) ";
 								}
-								tally = tally +"\nTotal Votes Cast - "+totalVotesCast.toPlainString()+"\n\nTo cast your vote, reply with\n/start";
+								tally = tally +"\n\n\nTotal Votes Cast - "+totalVotesCast.toPlainString()+"\n\nTo cast your vote, reply with\n/start";
 								
 								jsob.put("text", "Thank you *"+username+"*. \nYour self nomination for the *"+positionChosen+"* has been received.\n\nNote: Your nomination is subject to incumbent officials' evaluation.\n\n\nResults so far\n\n"+tally);
 							
@@ -675,7 +675,7 @@ public class UpdateProcessorCron {
 								position++;
 								tally = (tally + (!tally.isEmpty()? "\n\n\n": "") ) + "*"+position + ".* "+ votedto.getNominee() + "\nfor *"+ votedto.getPosition() +"* : "+ votedto.getCount() +" (*"+calculatePercentage(totalVotesCast, votedto.getCount()) +"%*) ";
 							}
-							tally = tally +"\nTotal Votes Cast - "+totalVotesCast.toPlainString()+"\n\nTo cast your vote, reply with\n/start";
+							tally = tally +"\n\n\nTotal Votes Cast - "+totalVotesCast.toPlainString()+"\n\nTo cast your vote, reply with\n/start";
 							jsob.put("text", tally);
 							jsob.put("parse_mode", "markdown");
 							
