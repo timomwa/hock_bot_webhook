@@ -1,9 +1,12 @@
 package org.hock_bot.ejb;
 
+import java.util.List;
+
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 
 import org.apache.log4j.Logger;
+import org.hock_bot.cron.VoteDTO;
 import org.hock_bot.dao.VoteDAOI;
 import org.hock_bot.model.Vote;
 
@@ -28,6 +31,11 @@ public class VoteEJBImpl implements VoteEJBI {
 	@Override
 	public Vote findbyVoterUserIdAndPosition(Integer userId, String position) {
 		return voteDAO.findbyVoterUserIdAndPosition(userId, position);
+	}
+
+	@Override
+	public List<VoteDTO> doTally() {
+		return voteDAO.doTally();
 	}
 
 }

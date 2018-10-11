@@ -1,6 +1,7 @@
 package org.hock_bot.cron;
 
 import java.util.concurrent.atomic.AtomicInteger;
+import java.math.BigDecimal;
 import java.net.URLEncoder;
 import java.util.Arrays;
 import java.util.Date;
@@ -610,7 +611,24 @@ public class UpdateProcessorCron {
 						
 						logger.info(" sourceMsg ::: "+sourceMsg);
 						
-						if(sourceMsg!=null && ( sourceMsg.equalsIgnoreCase("/nomination") || sourceMsg.equalsIgnoreCase("/start") )){
+						if(sourceMsg!=null &&  sourceMsg.equalsIgnoreCase("/results") ){
+							List<VoteDTO> votesDTO = nomineeEJB.doTally();
+							String tally = "";
+							BigDecimal totalVotesCast = BigDecimal.ZERO;
+							for(VoteDTO votedto : votesDTO){
+								totalVotesCast = totalVotesCast.add( BigDecimal.valueOf( votedto.getCount()) );
+							}
+							
+							int position = 0;
+							for(VoteDTO votedto : votesDTO){
+								position++;
+								tally = (tally + (!tally.isEmpty()? "\n": "") ) + position + ". "+ votedto.getNominee() + " for *"+ votedto.getPosition() +"* : "+ votedto.getCount() +" (*"+calculatePercentage(totalVotesCast, votedto.getCount()) +"%*) ";
+							}
+							tally = tally +"\nTotal Votes Cast - "+totalVotesCast.toPlainString()+"\n\nTo cast your vote, reply with\n/start";
+							jsob.put("text", tally);
+							jsob.put("parse_mode", "markdown");
+							
+						}else if(sourceMsg!=null && ( sourceMsg.equalsIgnoreCase("/nomination") || sourceMsg.equalsIgnoreCase("/start") )){
 							
 							String[] a = {"YES", "NO"};
 							List<String> yesandNo = Arrays.asList(a);
@@ -790,6 +808,18 @@ public class UpdateProcessorCron {
 			logger.error(e.getMessage(), e);
 		}
 		
+	}
+
+
+
+	private String calculatePercentage(BigDecimal totalVotesCast, Long count_) {
+		if(count_==0 || totalVotesCast.compareTo(BigDecimal.ZERO)==0)
+			return "0";
+		
+		BigDecimal count = BigDecimal.valueOf(count_);
+		BigDecimal percentage = count.divide(totalVotesCast, 2, BigDecimal.ROUND_HALF_UP).multiply( BigDecimal.valueOf(100));
+		
+		return percentage.toPlainString();
 	}
 
 
