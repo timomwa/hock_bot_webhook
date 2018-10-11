@@ -43,4 +43,9 @@ public class VoteEJBImpl implements VoteEJBI {
 		return voteDAO.findByNomineeUserNameAndNamesAndUserId(nomineeUsername, nomineeNames, userId, selfNomination); 
 	}
 
+	@Override
+	public List<VoteDTO> doTally(String post) {
+		return voteDAO.doTally(post);
+	}
+
 }

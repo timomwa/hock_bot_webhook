@@ -13,4 +13,6 @@ public interface VoteDAOI extends GenericDAOI<Vote, Long> {
 
 	Vote findByNomineeUserNameAndNamesAndUserId(String nomineeUsername, String nomineeNames, Integer userId, Boolean selfNomination);
 
+	List<VoteDTO> doTally(String post);
+
 }

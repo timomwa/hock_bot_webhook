@@ -5,7 +5,9 @@ import java.math.BigDecimal;
 import java.net.URLEncoder;
 import java.util.Arrays;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
@@ -637,6 +639,7 @@ public class UpdateProcessorCron {
 									List<VoteDTO> votesDTO = nomineeEJB.doTally();
 									String tally = "";
 									BigDecimal totalVotesCast = BigDecimal.ZERO;
+									
 									for(VoteDTO votedto : votesDTO){
 										totalVotesCast = totalVotesCast.add( BigDecimal.valueOf( votedto.getCount()) );
 									}
@@ -692,19 +695,30 @@ public class UpdateProcessorCron {
 						
 						if(sourceMsg!=null &&  sourceMsg.equalsIgnoreCase("/results") ){
 							
-							List<VoteDTO> votesDTO = nomineeEJB.doTally();
+							BigDecimal absoluteTotalVotesCast = BigDecimal.ZERO;
+							
 							String tally = "";
-							BigDecimal totalVotesCast = BigDecimal.ZERO;
-							for(VoteDTO votedto : votesDTO){
-								totalVotesCast = totalVotesCast.add( BigDecimal.valueOf( votedto.getCount()) );
+							
+							for(String post: positions){
+								
+								List<VoteDTO> votesDTO = nomineeEJB.doTally(post);
+								BigDecimal totalVotesCast = BigDecimal.ZERO;
+								for(VoteDTO votedto : votesDTO){
+									totalVotesCast = totalVotesCast.add( BigDecimal.valueOf( votedto.getCount()) );
+								}
+								absoluteTotalVotesCast = absoluteTotalVotesCast.add( totalVotesCast );
+								
+								int position = 0;
+								tally = tally + (!tally.isEmpty()? "\n": "\n\n") + "Position: *"+post+"*\n--------------------";
+								for(VoteDTO votedto : votesDTO){
+									position++;
+									tally = (tally + (!tally.isEmpty()? "\n\n\n": "") ) + "*"+position + ".* "+ votedto.getNominee() + "\nfor *"+ votedto.getPosition() +"* : "+ votedto.getCount() +" (*"+calculatePercentage(totalVotesCast, votedto.getCount()) +"%*) ";
+								}
+								tally = tally +"\n\n\nTotal *"+post+"* Votes - "+totalVotesCast.toPlainString()+"\n--------------------\n\n";
+								
 							}
 							
-							int position = 0;
-							for(VoteDTO votedto : votesDTO){
-								position++;
-								tally = (tally + (!tally.isEmpty()? "\n\n\n": "") ) + "*"+position + ".* "+ votedto.getNominee() + "\nfor *"+ votedto.getPosition() +"* : "+ votedto.getCount() +" (*"+calculatePercentage(totalVotesCast, votedto.getCount()) +"%*) ";
-							}
-							tally = tally +"\n\n\nTotal Votes Cast - "+totalVotesCast.toPlainString()+"\n\nTo cast your vote, reply with\n/start";
+							tally = tally +"\n\nTotal Votes (All Positions) - "+absoluteTotalVotesCast.toPlainString()+"\n\nTo cast your vote, reply with\n/start";
 							jsob.put("text", tally);
 							jsob.put("parse_mode", "markdown");
 							

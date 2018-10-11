@@ -91,6 +91,29 @@ public class VoteDAOImpl  extends GenericDAOImpl<Vote, Long> implements VoteDAOI
 		
 		return nominationVote;
 	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<VoteDTO> doTally(String position) {
+		List<VoteDTO> tally= new ArrayList<VoteDTO>();
+		
+		try{
+			
+			Query qry = em.createQuery("SELECT  v.nomineeNames, v.position, count(*) as cnt from Vote v WHERE v.position = :position GROUP BY v.nomineeNames,  v.position ORDER BY cnt DESC");
+			qry.setParameter("position", position);
+			List<Object[]> objects = qry.getResultList();
+			for(Object[] object : objects){
+				tally.add( new VoteDTO( (String)object[0] ,(String)object[1], (Long)object[2] ) ); 
+			}
+			
+		}catch(NoResultException nre){
+			
+		}catch(Exception e){
+			logger.error(e.getMessage(),e);
+		}
+		
+		return tally;
+	}
 	
 
 }
