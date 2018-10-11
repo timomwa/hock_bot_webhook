@@ -17,9 +17,9 @@ public class VoteDAOImpl  extends GenericDAOImpl<Vote, Long> implements VoteDAOI
 		
 		try{
 			
-			Query qry = em.createQuery("from Vote v WHERE v.voterUserId = :voterUserId AND lower(v.position) = lower(:position)");
+			Query qry = em.createQuery("from Vote v WHERE v.voterUserId = :voterUserId AND lower(v.position) = lower(:post_)");
 			qry.setParameter("voterUserId", voterUserId);
-			qry.setParameter("position", position);
+			qry.setParameter("post_", position);
 			nominationVote = (Vote) qry.getSingleResult();
 			
 		}catch(NoResultException nre){

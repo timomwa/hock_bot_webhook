@@ -409,8 +409,12 @@ public class UpdateProcessorCron {
 							
 							
 							String positionChosen = getChosen(data, positions);
+							Integer voterUserId = update.getCallbackQuery().getFromUser().getUserId();
 							
-							Vote nominationVoteCast = nomineeEJB.findbyVoterUserIdAndPosition(update.getCallbackQuery().getFromUser().getUserId(), positionChosen);
+							logger.info("\n\n\n\t positionChosen -> "+positionChosen+"\n\n");
+							logger.info("\n\n\n\t voterUserId -> "+voterUserId+"\n\n");
+							
+							Vote nominationVoteCast = nomineeEJB.findbyVoterUserIdAndPosition(voterUserId, positionChosen);
 							
 							logger.info("\n\n\n\t nominationVoteCast -> "+nominationVoteCast+"\n\n");
 							
