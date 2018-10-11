@@ -683,6 +683,8 @@ public class UpdateProcessorCron {
 							}else{
 								respText = "Reply with /start to start nominating members for official positions.";
 							}
+							
+							jsob.put("text", respText);
 						}
 					}
 					
