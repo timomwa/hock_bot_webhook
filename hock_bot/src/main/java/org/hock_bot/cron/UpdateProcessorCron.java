@@ -903,7 +903,7 @@ public class UpdateProcessorCron {
 			
 		}
 		
-		tally = tally +"\n\nTotal Votes (All Positions) - "+absoluteTotalVotesCast.toPlainString()+"\n\nTo cast your vote, reply with\n/start";
+		tally = tally +"\n\nTotal Votes (All Positions) - "+absoluteTotalVotesCast.toPlainString();
 		return tally;
 	}
 
