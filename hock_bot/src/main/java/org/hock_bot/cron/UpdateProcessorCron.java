@@ -252,7 +252,8 @@ public class UpdateProcessorCron {
 						
 						
 						{
-							String respText = "Nomitation time has passed. Thank you for participating! See you at the AGM where a paper ballot style elections will take place.";	
+							String tally = doTally(positions);
+							String respText = "Nomitation time has lapsed. Thank you for participating! See you at the AGM where a paper ballot style elections will take place.\n\n Below are the results \n\n "+tally;	
 							jsob.put("chat_id", chat_C.getChatId());
 							jsob.put("text", respText);
 							jsob.put("reply_to_message_id", message_C.getMessageId());
@@ -660,7 +661,8 @@ public class UpdateProcessorCron {
 						
 						
 						{
-							respText = "Nomitation time has passed. Thank you for participating! See you at the AGM where a paper ballot style elections will take place.";	
+							String tally = doTally(positions);
+							respText = "Nomitation time has lapsed. Thank you for participating! See you at the AGM where a paper ballot style elections will take place.\n\n Below are the results \n\n "+tally;	
 							jsob.put("chat_id", chat.getChatId());
 							jsob.put("text", respText);
 							jsob.put("reply_to_message_id", message.getMessageId());
