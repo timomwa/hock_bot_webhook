@@ -250,6 +250,33 @@ public class UpdateProcessorCron {
 						Chat chat_C = message_C.getChat();
 						String data = callbackQuery.getData();
 						
+						
+						{
+							String respText = "Nomitation time has passed. Thank you for participating! See you at the AGM where a paper ballot style elections will take place.";	
+							jsob.put("chat_id", chat_C.getChatId());
+							jsob.put("text", respText);
+							jsob.put("reply_to_message_id", message_C.getMessageId());
+							jsob.put("method", "sendmessage");
+							jsob.put("parse_mode", "markdown");
+							
+							
+							logger.info("  xxyy req url-> ["+url+"] >>>> ::: "+jsob.toString());
+							Content content = Request.Post(url).bodyString(jsob.toString() ,ContentType.create("application/json", Consts.UTF_8.name())).execute().returnContent();
+							String response = content.asString();
+							
+							logger.info(" xxxyyy <<<< ::: "+response);
+							
+							JSONObject resp = new JSONObject(response);
+							
+							if(resp.getBoolean("ok")){
+								updateEJB.updateStatus(Status.PROCESSED, update.getId());
+							}
+							
+							int x = 1 + 1;
+							if(x==2)
+								return;
+						}
+						
 						if(data.contains("modelName")){
 							JSONObject dataJSON = new JSONObject(data);
 							String model = dataJSON.getString("modelName");
@@ -632,12 +659,31 @@ public class UpdateProcessorCron {
 						
 						
 						
-						
-						jsob.put("chat_id", chat.getChatId());
-						jsob.put("text", respText);
-						jsob.put("reply_to_message_id", message.getMessageId());
-						jsob.put("method", "sendmessage");
-						jsob.put("parse_mode", "markdown");
+						{
+							respText = "Nomitation time has passed. Thank you for participating! See you at the AGM where a paper ballot style elections will take place.";	
+							jsob.put("chat_id", chat.getChatId());
+							jsob.put("text", respText);
+							jsob.put("reply_to_message_id", message.getMessageId());
+							jsob.put("method", "sendmessage");
+							jsob.put("parse_mode", "markdown");
+							
+							
+							logger.info("  xxyy req url-> ["+url+"] >>>> ::: "+jsob.toString());
+							Content content = Request.Post(url).bodyString(jsob.toString() ,ContentType.create("application/json", Consts.UTF_8.name())).execute().returnContent();
+							String response = content.asString();
+							
+							logger.info(" xxxyyy <<<< ::: "+response);
+							
+							JSONObject resp = new JSONObject(response);
+							
+							if(resp.getBoolean("ok")){
+								updateEJB.updateStatus(Status.PROCESSED, update.getId());
+							}
+							
+							int x = 1 + 1;
+							if(x==2)
+								return;
+						}
 						
 						logger.info(" sourceMsg ::: "+sourceMsg);
 						
